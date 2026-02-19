@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:q4_board/l10n/app_localizations.dart';
@@ -92,6 +93,23 @@ class SettingsScreen extends ConsumerWidget {
               enabled: false,
             ),
           ),
+          if (kDebugMode) ...[
+            const SizedBox(height: AppSpacing.md),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              child: ListTile(
+                leading: const Icon(Icons.science_outlined),
+                title: Text(l10n.loadDemoData),
+                subtitle: Text(l10n.loadDemoDataDesc),
+                trailing: FilledButton.tonal(
+                  onPressed: () => _onLoadDemoDataPressed(context, ref),
+                  child: Text(l10n.loadDemoData),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.md),
           Card(
             shape: RoundedRectangleBorder(
@@ -147,6 +165,25 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(SnackBar(content: Text(l10n.localDataResetSuccess)));
+  }
+
+  Future<void> _onLoadDemoDataPressed(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final count = await ref
+        .read(localDataMaintenanceServiceProvider)
+        .loadDemoData();
+
+    if (!context.mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(content: Text(l10n.demoDataLoaded(count))));
   }
 }
 

@@ -166,6 +166,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dragToReorder => 'اسحب لإعادة الترتيب';
 
   @override
+  String get loadDemoData => 'تحميل بيانات تجريبية';
+
+  @override
+  String get loadDemoDataDesc =>
+      'استبدال الملاحظات المحلية ببيانات جاهزة لالتقاط لقطات الشاشة.';
+
+  @override
+  String demoDataLoaded(int count) {
+    return 'تم تحميل $count ملاحظات تجريبية';
+  }
+
+  @override
   String get resetLocalData => 'إعادة ضبط البيانات المحلية';
 
   @override

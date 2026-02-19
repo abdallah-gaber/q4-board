@@ -52,6 +52,16 @@
   "pickDate": "اختيار تاريخ",
   "doneChip": "منجز",
   "dragToReorder": "اسحب لإعادة الترتيب",
+  "loadDemoData": "تحميل بيانات تجريبية",
+  "loadDemoDataDesc": "استبدال الملاحظات المحلية ببيانات جاهزة لالتقاط لقطات الشاشة.",
+  "demoDataLoaded": "تم تحميل {count} ملاحظات تجريبية",
+  "@demoDataLoaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "resetLocalData": "إعادة ضبط البيانات المحلية",
   "resetLocalDataDesc": "يمسح كل الملاحظات والإعدادات المحفوظة على هذا الجهاز.",
   "resetLocalDataConfirmTitle": "إعادة ضبط البيانات؟",

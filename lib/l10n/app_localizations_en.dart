@@ -166,6 +166,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dragToReorder => 'Drag to reorder';
 
   @override
+  String get loadDemoData => 'Load demo data';
+
+  @override
+  String get loadDemoDataDesc =>
+      'Replace local notes with curated demo content for screenshots.';
+
+  @override
+  String demoDataLoaded(int count) {
+    return '$count demo notes loaded';
+  }
+
+  @override
   String get resetLocalData => 'Reset local data';
 
   @override

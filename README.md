@@ -79,11 +79,23 @@ Docs/
 
 ## Screenshots
 
-![Board Light](docs/screenshots/board_light.png)
-![Board Dark](docs/screenshots/board_dark.png)
-![Mobile Quadrants](docs/screenshots/mobile_quadrants.png)
+### Web — Light Mode
 
-Replace placeholders by adding images with the same names.
+<p align="center">
+  <img src="docs/screenshots/board_light.png" alt="Q4 Board Web Light Mode" width="960">
+</p>
+
+### Web — Dark Mode
+
+<p align="center">
+  <img src="docs/screenshots/board_dark.png" alt="Q4 Board Web Dark Mode" width="960">
+</p>
+
+### Mobile — Android
+
+<p align="center">
+  <img src="docs/screenshots/mobile_quadrants.png" alt="Q4 Board Mobile Android Screenshot" width="360">
+</p>
 
 ## Roadmap
 

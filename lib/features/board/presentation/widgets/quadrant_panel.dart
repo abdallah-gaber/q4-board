@@ -16,7 +16,7 @@ class NoteDragData {
   final QuadrantType fromQuadrant;
 }
 
-class QuadrantPanel extends StatelessWidget {
+class QuadrantPanel extends StatefulWidget {
   const QuadrantPanel({
     super.key,
     required this.quadrantType,
@@ -37,14 +37,21 @@ class QuadrantPanel extends StatelessWidget {
   final void Function(String noteId, int toIndex) onDrop;
 
   @override
+  State<QuadrantPanel> createState() => _QuadrantPanelState();
+}
+
+class _QuadrantPanelState extends State<QuadrantPanel> {
+  String? _draggingNoteId;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final visual = quadrantVisualFor(quadrantType);
+    final visual = quadrantVisualFor(widget.quadrantType);
 
     return DragTarget<NoteDragData>(
       onWillAcceptWithDetails: (_) => true,
       onAcceptWithDetails: (details) =>
-          onDrop(details.data.noteId, notes.length),
+          widget.onDrop(details.data.noteId, widget.notes.length),
       builder: (context, candidateData, rejectedData) {
         final isHovered = candidateData.isNotEmpty;
 
@@ -100,7 +107,7 @@ class QuadrantPanel extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: onAdd,
+                    onPressed: widget.onAdd,
                     icon: const Icon(Icons.add_circle_outline_rounded),
                     tooltip: l10n.addNote,
                   ),
@@ -108,65 +115,80 @@ class QuadrantPanel extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               Expanded(
-                child: notes.isEmpty
+                child: widget.notes.isEmpty
                     ? _EmptyQuadrantState(
-                        quadrantType: quadrantType,
-                        onDrop: onDrop,
+                        quadrantType: widget.quadrantType,
+                        onDrop: widget.onDrop,
                       )
                     : LayoutBuilder(
                         builder: (context, constraints) {
                           final feedbackWidth = constraints.maxWidth;
+
                           return ListView.builder(
                             key: PageStorageKey<String>(
-                              'quadrant-${quadrantType.name}',
+                              'quadrant-${widget.quadrantType.name}',
                             ),
-                            itemCount: notes.length * 2 + 1,
+                            itemCount: widget.notes.length * 2 + 1,
                             padding: EdgeInsets.zero,
                             itemBuilder: (context, index) {
                               if (index.isEven) {
                                 final toIndex = index ~/ 2;
                                 return _DropSlot(
-                                  onAccept: (noteId) => onDrop(noteId, toIndex),
+                                  onAccept: (noteId) =>
+                                      widget.onDrop(noteId, toIndex),
                                 );
                               }
 
-                              final note = notes[(index - 1) ~/ 2];
+                              final note = widget.notes[(index - 1) ~/ 2];
+                              final isDragging = _draggingNoteId == note.id;
+
+                              final feedbackCard = StickyNoteCard(
+                                note: note,
+                                visual: visual,
+                                onToggleDone: (_) {},
+                                onEdit: () {},
+                                onDelete: () {},
+                                disableActions: true,
+                              );
+
                               final card = StickyNoteCard(
                                 key: ValueKey<String>('desktop-${note.id}'),
                                 note: note,
                                 visual: visual,
-                                onToggleDone: (value) =>
-                                    onToggleDone(note.copyWith(isDone: value)),
-                                onEdit: () => onEdit(note),
-                                onDelete: () => onDelete(note),
+                                onToggleDone: (value) => widget.onToggleDone(
+                                  note.copyWith(isDone: value),
+                                ),
+                                onEdit: () => widget.onEdit(note),
+                                onDelete: () => widget.onDelete(note),
+                                trailing: _DesktopDragHandle(
+                                  note: note,
+                                  feedbackWidth: feedbackWidth,
+                                  feedback: feedbackCard,
+                                  tooltip: l10n.dragToReorder,
+                                  onDragStarted: () {
+                                    setState(() {
+                                      _draggingNoteId = note.id;
+                                    });
+                                  },
+                                  onDragEnded: () {
+                                    if (!mounted) {
+                                      return;
+                                    }
+                                    setState(() {
+                                      _draggingNoteId = null;
+                                    });
+                                  },
+                                ),
                               );
 
                               return RepaintBoundary(
-                                child: LongPressDraggable<NoteDragData>(
-                                  data: NoteDragData(
-                                    noteId: note.id,
-                                    fromQuadrant: note.quadrantType,
+                                child: AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 100),
+                                  opacity: isDragging ? 0.3 : 1,
+                                  child: IgnorePointer(
+                                    ignoring: isDragging,
+                                    child: card,
                                   ),
-                                  dragAnchorStrategy: pointerDragAnchorStrategy,
-                                  feedback: Material(
-                                    color: Colors.transparent,
-                                    child: SizedBox(
-                                      width: feedbackWidth,
-                                      child: StickyNoteCard(
-                                        note: note,
-                                        visual: visual,
-                                        onToggleDone: (_) {},
-                                        onEdit: () {},
-                                        onDelete: () {},
-                                        disableActions: true,
-                                      ),
-                                    ),
-                                  ),
-                                  childWhenDragging: Opacity(
-                                    opacity: 0.24,
-                                    child: IgnorePointer(child: card),
-                                  ),
-                                  child: card,
                                 ),
                               );
                             },
@@ -178,6 +200,76 @@ class QuadrantPanel extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _DesktopDragHandle extends StatelessWidget {
+  const _DesktopDragHandle({
+    required this.note,
+    required this.feedbackWidth,
+    required this.feedback,
+    required this.tooltip,
+    required this.onDragStarted,
+    required this.onDragEnded,
+  });
+
+  final NoteEntity note;
+  final double feedbackWidth;
+  final Widget feedback;
+  final String tooltip;
+  final VoidCallback onDragStarted;
+  final VoidCallback onDragEnded;
+
+  @override
+  Widget build(BuildContext context) {
+    return LongPressDraggable<NoteDragData>(
+      data: NoteDragData(noteId: note.id, fromQuadrant: note.quadrantType),
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      onDragStarted: onDragStarted,
+      onDragCompleted: onDragEnded,
+      onDragEnd: (_) => onDragEnded(),
+      onDraggableCanceled: (_, __) => onDragEnded(),
+      feedback: Material(
+        color: Colors.transparent,
+        child: SizedBox(width: feedbackWidth, child: feedback),
+      ),
+      childWhenDragging: const _DragHandleVisual(isDragging: true),
+      child: Tooltip(
+        message: tooltip,
+        child: const _DragHandleVisual(isDragging: false),
+      ),
+    );
+  }
+}
+
+class _DragHandleVisual extends StatelessWidget {
+  const _DragHandleVisual({required this.isDragging});
+
+  final bool isDragging;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.grab,
+      child: Container(
+        width: 28,
+        height: 28,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Theme.of(
+            context,
+          ).colorScheme.surface.withValues(alpha: isDragging ? 0.42 : 0.68),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Icon(
+          Icons.drag_indicator_rounded,
+          size: 16,
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.75),
+        ),
+      ),
     );
   }
 }

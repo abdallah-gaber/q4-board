@@ -23,18 +23,18 @@ class QuadrantVisual {
   String actionLabel(AppLocalizations l10n) => labelBuilder(l10n);
 
   Color panelTint(Brightness brightness) {
-    final opacity = brightness == Brightness.dark ? 0.2 : 0.12;
+    final opacity = brightness == Brightness.dark ? 0.16 : 0.1;
     return accentColor.withValues(alpha: opacity);
   }
 
   Color cardTint(Brightness brightness) {
     if (brightness == Brightness.dark) {
       return Color.alphaBlend(
-        accentColor.withValues(alpha: 0.12),
+        accentColor.withValues(alpha: 0.08),
         const Color(0xFF1D222A),
       );
     }
-    return Color.alphaBlend(accentColor.withValues(alpha: 0.16), paperColor);
+    return Color.alphaBlend(accentColor.withValues(alpha: 0.09), paperColor);
   }
 }
 
@@ -43,32 +43,32 @@ QuadrantVisual quadrantVisualFor(QuadrantType type) {
     case QuadrantType.iu:
       return const QuadrantVisual(
         icon: Icons.bolt_rounded,
-        accentColor: Color(0xFFD84D57),
-        paperColor: Color(0xFFFFF9E9),
+        accentColor: Color(0xFFCC6B73),
+        paperColor: Color(0xFFFFFAF1),
         titleBuilder: _q1,
         labelBuilder: _q1Label,
       );
     case QuadrantType.inu:
       return const QuadrantVisual(
         icon: Icons.event_available_rounded,
-        accentColor: Color(0xFF2F9E8B),
-        paperColor: Color(0xFFEFFAF3),
+        accentColor: Color(0xFF5F9B87),
+        paperColor: Color(0xFFF2FBF6),
         titleBuilder: _q2,
         labelBuilder: _q2Label,
       );
     case QuadrantType.niu:
       return const QuadrantVisual(
         icon: Icons.support_agent_rounded,
-        accentColor: Color(0xFFE39B45),
-        paperColor: Color(0xFFFFF5E7),
+        accentColor: Color(0xFFC69663),
+        paperColor: Color(0xFFFFF7EC),
         titleBuilder: _q3,
         labelBuilder: _q3Label,
       );
     case QuadrantType.ninu:
       return const QuadrantVisual(
         icon: Icons.block_rounded,
-        accentColor: Color(0xFF5F8FB1),
-        paperColor: Color(0xFFF0F6FF),
+        accentColor: Color(0xFF6F8FA6),
+        paperColor: Color(0xFFF3F8FF),
         titleBuilder: _q4,
         labelBuilder: _q4Label,
       );

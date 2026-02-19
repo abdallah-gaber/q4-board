@@ -42,7 +42,7 @@ class StickyNoteCard extends StatelessWidget {
     final baseColor = visual.cardTint(theme.brightness);
     final cardColor = note.isDone
         ? Color.alphaBlend(
-            theme.colorScheme.surface.withValues(alpha: 0.5),
+            theme.colorScheme.surface.withValues(alpha: 0.62),
             baseColor,
           )
         : baseColor;
@@ -58,7 +58,7 @@ class StickyNoteCard extends StatelessWidget {
     final descriptionStyle = theme.textTheme.bodySmall?.copyWith(
       decoration: note.isDone ? TextDecoration.lineThrough : null,
       color: theme.colorScheme.onSurface.withValues(
-        alpha: note.isDone ? 0.58 : 0.78,
+        alpha: note.isDone ? 0.56 : 0.74,
       ),
     );
 
@@ -75,7 +75,7 @@ class StickyNoteCard extends StatelessWidget {
           boxShadow: AppShadows.soft(Colors.black),
           border: Border.all(
             color: visual.accentColor.withValues(
-              alpha: note.isDone ? 0.14 : 0.26,
+              alpha: note.isDone ? 0.11 : 0.18,
             ),
           ),
         ),
@@ -86,17 +86,17 @@ class StickyNoteCard extends StatelessWidget {
               start: 0,
               end: 0,
               child: Container(
-                height: 6,
+                height: 4,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(AppRadii.sm),
                   ),
-                  color: visual.accentColor.withValues(alpha: 0.9),
+                  color: visual.accentColor.withValues(alpha: 0.7),
                 ),
               ),
             ),
             PositionedDirectional(
-              top: 7,
+              top: 6,
               end: 7,
               child: IgnorePointer(
                 child: Container(
@@ -113,7 +113,7 @@ class StickyNoteCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 14, 12, 10),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

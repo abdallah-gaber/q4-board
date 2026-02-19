@@ -128,6 +128,24 @@ abstract class AppLocalizations {
   /// **'Show done'**
   String get showDone;
 
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterHideDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide done'**
+  String get filterHideDone;
+
+  /// No description provided for @doneFilterControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Done items filter'**
+  String get doneFilterControl;
+
   /// No description provided for @addNote.
   ///
   /// In en, this message translates to:
@@ -314,6 +332,30 @@ abstract class AppLocalizations {
   /// **'DON\'T DO'**
   String get q4Label;
 
+  /// No description provided for @q1TabSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Do first quadrant'**
+  String get q1TabSemantics;
+
+  /// No description provided for @q2TabSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule quadrant'**
+  String get q2TabSemantics;
+
+  /// No description provided for @q3TabSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Delegate quadrant'**
+  String get q3TabSemantics;
+
+  /// No description provided for @q4TabSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t do quadrant'**
+  String get q4TabSemantics;
+
   /// No description provided for @emptyQuadrant.
   ///
   /// In en, this message translates to:
@@ -361,6 +403,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get doneChip;
+
+  /// No description provided for @dragToReorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to reorder'**
+  String get dragToReorder;
 
   /// No description provided for @resetLocalData.
   ///

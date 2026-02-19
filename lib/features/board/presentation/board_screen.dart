@@ -238,6 +238,8 @@ class _BoardScreenState extends ConsumerState<BoardScreen>
   }
 }
 
+enum _DoneFilterMode { all, hideDone }
+
 class _BoardToolbar extends StatelessWidget {
   const _BoardToolbar({
     required this.isMobile,
@@ -266,11 +268,32 @@ class _BoardToolbar extends StatelessWidget {
       onChanged: onQueryChanged,
     );
 
-    final doneChip = FilterChip(
-      selected: showDone,
-      onSelected: onShowDoneChanged,
-      avatar: const Icon(Icons.check_circle_outline_rounded, size: 18),
-      label: Text(l10n.showDone),
+    final selectedMode = showDone
+        ? _DoneFilterMode.all
+        : _DoneFilterMode.hideDone;
+    final doneFilterControl = SegmentedButton<_DoneFilterMode>(
+      showSelectedIcon: false,
+      segments: [
+        ButtonSegment<_DoneFilterMode>(
+          value: _DoneFilterMode.all,
+          icon: const Icon(Icons.checklist_rounded, size: 18),
+          label: Text(l10n.filterAll),
+        ),
+        ButtonSegment<_DoneFilterMode>(
+          value: _DoneFilterMode.hideDone,
+          icon: const Icon(Icons.visibility_off_outlined, size: 18),
+          label: Text(l10n.filterHideDone),
+        ),
+      ],
+      selected: {selectedMode},
+      style: const ButtonStyle(
+        visualDensity: VisualDensity.compact,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onSelectionChanged: (selection) {
+        final nextMode = selection.first;
+        onShowDoneChanged(nextMode == _DoneFilterMode.all);
+      },
     );
 
     if (isMobile) {
@@ -279,7 +302,13 @@ class _BoardToolbar extends StatelessWidget {
         children: [
           searchField,
           const SizedBox(height: AppSpacing.xs),
-          Align(alignment: AlignmentDirectional.centerStart, child: doneChip),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Semantics(
+              label: l10n.doneFilterControl,
+              child: doneFilterControl,
+            ),
+          ),
         ],
       );
     }
@@ -288,7 +317,13 @@ class _BoardToolbar extends StatelessWidget {
       children: [
         Expanded(child: searchField),
         const SizedBox(width: AppSpacing.sm),
-        doneChip,
+        ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 250, maxWidth: 340),
+          child: Semantics(
+            label: l10n.doneFilterControl,
+            child: doneFilterControl,
+          ),
+        ),
       ],
     );
   }
@@ -357,6 +392,8 @@ class _MobileBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         Container(
@@ -376,11 +413,23 @@ class _MobileBoard extends StatelessWidget {
               color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(AppRadii.md - 2),
             ),
-            tabs: const [
-              Tab(text: 'Q1'),
-              Tab(text: 'Q2'),
-              Tab(text: 'Q3'),
-              Tab(text: 'Q4'),
+            tabs: [
+              _iconTab(
+                icon: Icons.bolt_rounded,
+                semantics: l10n.q1TabSemantics,
+              ),
+              _iconTab(
+                icon: Icons.event_available_rounded,
+                semantics: l10n.q2TabSemantics,
+              ),
+              _iconTab(
+                icon: Icons.person_outline_rounded,
+                semantics: l10n.q3TabSemantics,
+              ),
+              _iconTab(
+                icon: Icons.block_rounded,
+                semantics: l10n.q4TabSemantics,
+              ),
             ],
           ),
         ),
@@ -406,6 +455,15 @@ class _MobileBoard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _iconTab({required IconData icon, required String semantics}) {
+    return Tab(
+      icon: Tooltip(
+        message: semantics,
+        child: Semantics(label: semantics, child: Icon(icon)),
+      ),
     );
   }
 }

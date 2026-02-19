@@ -24,6 +24,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showDone => 'Show done';
 
   @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterHideDone => 'Hide done';
+
+  @override
+  String get doneFilterControl => 'Done items filter';
+
+  @override
   String get addNote => 'Add note';
 
   @override
@@ -118,6 +127,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get q4Label => 'DON\'T DO';
 
   @override
+  String get q1TabSemantics => 'Do first quadrant';
+
+  @override
+  String get q2TabSemantics => 'Schedule quadrant';
+
+  @override
+  String get q3TabSemantics => 'Delegate quadrant';
+
+  @override
+  String get q4TabSemantics => 'Don\'t do quadrant';
+
+  @override
   String get emptyQuadrant => 'No notes yet';
 
   @override
@@ -140,6 +161,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get doneChip => 'Done';
+
+  @override
+  String get dragToReorder => 'Drag to reorder';
 
   @override
   String get resetLocalData => 'Reset local data';

@@ -24,6 +24,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get showDone => 'إظهار المكتمل';
 
   @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get filterHideDone => 'إخفاء المكتمل';
+
+  @override
+  String get doneFilterControl => 'فلتر المهام المكتملة';
+
+  @override
   String get addNote => 'إضافة ملاحظة';
 
   @override
@@ -118,6 +127,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get q4Label => 'استبعده';
 
   @override
+  String get q1TabSemantics => 'قسم ابدأ الآن';
+
+  @override
+  String get q2TabSemantics => 'قسم خطط له';
+
+  @override
+  String get q3TabSemantics => 'قسم فوّضه';
+
+  @override
+  String get q4TabSemantics => 'قسم استبعده';
+
+  @override
   String get emptyQuadrant => 'لا توجد ملاحظات بعد';
 
   @override
@@ -140,6 +161,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get doneChip => 'منجز';
+
+  @override
+  String get dragToReorder => 'اسحب لإعادة الترتيب';
 
   @override
   String get resetLocalData => 'إعادة ضبط البيانات المحلية';

@@ -95,23 +95,6 @@ class StickyNoteCard extends StatelessWidget {
                 ),
               ),
             ),
-            PositionedDirectional(
-              top: 6,
-              end: 7,
-              child: IgnorePointer(
-                child: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.33),
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(2),
-                      bottomLeft: Radius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
               child: Column(

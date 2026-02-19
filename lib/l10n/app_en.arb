@@ -52,6 +52,16 @@
   "pickDate": "Pick date",
   "doneChip": "Done",
   "dragToReorder": "Drag to reorder",
+  "loadDemoData": "Load demo data",
+  "loadDemoDataDesc": "Replace local notes with curated demo content for screenshots.",
+  "demoDataLoaded": "{count} demo notes loaded",
+  "@demoDataLoaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "resetLocalData": "Reset local data",
   "resetLocalDataDesc": "Clear all notes and settings saved on this device.",
   "resetLocalDataConfirmTitle": "Reset local data?",

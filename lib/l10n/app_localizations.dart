@@ -410,6 +410,24 @@ abstract class AppLocalizations {
   /// **'Drag to reorder'**
   String get dragToReorder;
 
+  /// No description provided for @loadDemoData.
+  ///
+  /// In en, this message translates to:
+  /// **'Load demo data'**
+  String get loadDemoData;
+
+  /// No description provided for @loadDemoDataDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace local notes with curated demo content for screenshots.'**
+  String get loadDemoDataDesc;
+
+  /// No description provided for @demoDataLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} demo notes loaded'**
+  String demoDataLoaded(int count);
+
   /// No description provided for @resetLocalData.
   ///
   /// In en, this message translates to:

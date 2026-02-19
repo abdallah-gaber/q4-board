@@ -1,105 +1,106 @@
-# Q4 Board
+# Q4 Board — Eisenhower Matrix
 
-Q4 Board is a bilingual (Arabic/English) Flutter app that applies the Eisenhower Matrix using a 4-quadrant board with sticky-note cards.
+Q4 Board is a bilingual productivity app based on the Eisenhower Matrix.
+Arabic name: **لوحة الأولويات (مصفوفة آيزنهاور)**.
 
-## Phase 1 Scope
+It helps you classify tasks into 4 quadrants and prioritize execution with a sticky-note board experience.
 
-Implemented in this repository:
-- Local-first MVP (Hive, no auth/sync)
-- Eisenhower board (Q1/Q2/Q3/Q4)
+## Features (Phase 1)
+
+- Local-first storage with Hive (offline by default)
+- 4-quadrant Eisenhower board (Q1/Q2/Q3/Q4)
+- Manual drag/reorder with persisted ordering
+- Move notes between quadrants
 - Search across notes
-- Show Done filter (persisted default)
-- Add/edit/delete notes
-- Move notes across quadrants
-- Undo delete and undo move
-- Manual ordering persistence (`orderIndex`)
-- Responsive UI:
-  - Desktop/Web/macOS: 2x2 quadrant grid with drag-drop + reorder
-  - Mobile: tabs with reorder + move menu
-- Settings screen:
-  - Theme mode (System/Light/Dark)
-  - Default Show Done preference
-  - Language mode (System/English/Arabic)
-- Phase 2 placeholders only:
-  - `AuthService` interface
-  - `SyncRepository` interface
+- Show/hide done filtering
+- Undo for delete and move actions
+- Arabic/English localization (RTL support)
+- Light/Dark/System themes
+- Responsive UX for web/mobile/desktop
 
 ## Tech Stack
 
-- Flutter (Web + Android + macOS)
+- Flutter
 - Riverpod
-- Hive
 - GoRouter
-- Flutter localization (`arb`)
+- Hive
+- Flutter i18n (`arb`)
 
-## Bundle / Application IDs
+## Getting Started
 
-- Android namespace + application id: `dev.abdallahgaber.q4board`
-- macOS bundle id: `dev.abdallahgaber.q4board`
+### Prerequisites
 
-Note: platform identifiers cannot contain `-`, so the canonical package form is used.
+- Flutter SDK installed
+- A device/emulator/simulator for your target platform
+
+### Install dependencies
+
+```bash
+flutter pub get
+```
+
+### Run (Web)
+
+```bash
+flutter run -d chrome
+```
+
+### Run (Android)
+
+```bash
+flutter run -d android
+```
+
+### Run (iOS)
+
+```bash
+flutter run -d ios
+```
+
+### Run (macOS)
+
+```bash
+flutter run -d macos
+```
 
 ## Project Structure
 
 ```text
 lib/
-  core/
-    design/
-    providers/
-    theme/
-    utils/
-  data/
-    datasources/local/
-    hive/
-      adapters/
-      models/
-    repositories/
-  domain/
-    entities/
-    enums/
-    repositories/
-    services/
-  features/
-    board/
-      controllers/
-      presentation/
-    note_editor/
-      presentation/
-    settings/
-      controllers/
-      presentation/
-  l10n/
+  core/          # app-wide theme, routing, design tokens, helpers
+  domain/        # entities + repository/service contracts
+  data/          # Hive models/adapters + repository implementations
+  features/      # board, note editor, settings
+  l10n/          # ARB files + generated localization output
+
+Docs/
+  docs/          # roadmap, architecture, decisions, contributing
 ```
 
-## Run
+## Screenshots
 
-```bash
-flutter pub get
-flutter run -d chrome
-# or
-flutter run -d android
-# or
-flutter run -d macos
-```
+![Board Light](docs/screenshots/board_light.png)
+![Board Dark](docs/screenshots/board_dark.png)
+![Mobile Quadrants](docs/screenshots/mobile_quadrants.png)
 
-## Test & Quality
+Replace placeholders by adding images with the same names.
+
+## Roadmap
+
+- **Phase 1**: Local-first MVP (done)
+- **Phase 2**: Authentication + cloud sync (planned)
+- **Later phases**: richer planning workflows, productivity insights, and integrations
+
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for details.
+
+## Known Issues
+
+- Desktop/Web drag can still show a visual jump/snap at drag start in some cases. This is tracked and will be improved in a coming UI iteration.
+- Minor drag-feel differences may appear across browsers because pointer/drag behavior differs by engine.
+
+## Quality Checks
 
 ```bash
 flutter analyze
 flutter test
 ```
-
-Implemented tests:
-- unit tests for repository implementations
-- unit tests for board controller logic
-- widget test verifying 4 quadrants render and adding a note works
-
-## Localization
-
-- English: `lib/l10n/app_en.arb`
-- Arabic: `lib/l10n/app_ar.arb`
-
-## Notes
-
-- Firebase project `q4-board-prod` is intentionally not integrated yet.
-- Sync controls are shown as coming soon in Settings.

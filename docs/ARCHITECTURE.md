@@ -24,7 +24,9 @@ Q4 Board uses a feature-first structure with clear domain/data boundaries.
 
 - Firebase bootstrap is runtime-safe: app falls back to local-only mode when `firebase_options.dart` is still a placeholder.
 - Auth uses Firebase anonymous sign-in for initial cross-device sync support.
-- Firestore sync is currently manual (`Push` / `Pull`) from Settings.
+- Firestore sync supports manual (`Push` / `Pull`) actions from Settings.
+- A Firestore snapshot listener can apply remote changes to local storage after sign-in (live remote-to-local sync).
+- App resume triggers a throttled auto-pull to reduce stale local state after backgrounding.
 - Merge behavior uses last-write-wins by `updatedAt` with a safety guard that avoids wiping local notes when remote is empty.
 
 ## Testing Strategy

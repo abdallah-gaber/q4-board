@@ -31,6 +31,10 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
       StreamController<SyncStatusSnapshot>.broadcast();
 
   SyncStatusSnapshot _latest = SyncStatusSnapshot.idle;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _liveSub;
+  String? _liveUid;
+  bool _isApplyingLiveSync = false;
+  bool _queuedLiveSync = false;
 
   @override
   Stream<SyncStatusSnapshot> watchStatus() {
@@ -99,39 +103,7 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
 
     _emit(const SyncStatusSnapshot(code: SyncStatusCode.pulling));
     try {
-      final localNotes = await _localNoteRepository.getAllNotes();
-      final remoteNotes = await _fetchRemoteNotes(uid);
-      final plan = NoteSyncMergePlanner.buildPullPlan(
-        localNotes: localNotes,
-        remoteNotes: remoteNotes,
-      );
-
-      for (final note in plan.upserts) {
-        await _localNoteRepository.upsert(note);
-      }
-      for (final id in plan.deletes) {
-        await _localNoteRepository.deleteById(id);
-      }
-
-      final now = DateTime.now();
-      _emit(
-        SyncStatusSnapshot(
-          code: SyncStatusCode.success,
-          lastMessage: plan.skippedEmptyRemoteDelete
-              ? 'pull_remote_empty_local_kept'
-              : (plan.skippedConflicts > 0
-                    ? 'pull_conflicts_skipped'
-                    : 'pull_complete'),
-          lastSuccessAt: now,
-        ),
-      );
-
-      return SyncOperationResult(
-        upserts: plan.upserts.length,
-        deletes: plan.deletes.length,
-        skippedConflicts: plan.skippedConflicts,
-        didMutate: plan.upserts.isNotEmpty || plan.deletes.isNotEmpty,
-      );
+      return _pullFromRemote(uid: uid, source: 'manual');
     } catch (error) {
       _emit(
         SyncStatusSnapshot(
@@ -144,20 +116,82 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
     }
   }
 
+  @override
+  Future<void> startLiveSync() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) {
+      _emit(const SyncStatusSnapshot(code: SyncStatusCode.authRequired));
+      throw StateError('Authentication required.');
+    }
+    if (_liveUid == uid && _liveSub != null) {
+      _emit(
+        SyncStatusSnapshot(
+          code: SyncStatusCode.liveListening,
+          lastMessage: 'live_sync_active',
+          lastSuccessAt: _latest.lastSuccessAt,
+        ),
+      );
+      return;
+    }
+
+    await stopLiveSync();
+    _liveUid = uid;
+
+    _liveSub = _notesCollection(uid).snapshots().listen(
+      (snapshot) async {
+        if (snapshot.metadata.isFromCache &&
+            !snapshot.metadata.hasPendingWrites) {
+          return;
+        }
+        final remoteNotes = _mapRemoteSnapshot(snapshot);
+        await _applyLiveRemote(uid: uid, remoteNotes: remoteNotes);
+      },
+      onError: (Object error, StackTrace _) {
+        _emit(
+          SyncStatusSnapshot(
+            code: SyncStatusCode.error,
+            lastMessage: 'live_sync_error:${error.toString()}',
+            lastSuccessAt: _latest.lastSuccessAt,
+          ),
+        );
+      },
+    );
+
+    _emit(
+      SyncStatusSnapshot(
+        code: SyncStatusCode.liveListening,
+        lastMessage: 'live_sync_active',
+        lastSuccessAt: _latest.lastSuccessAt,
+      ),
+    );
+  }
+
+  @override
+  Future<void> stopLiveSync() async {
+    final sub = _liveSub;
+    _liveSub = null;
+    _liveUid = null;
+    _isApplyingLiveSync = false;
+    _queuedLiveSync = false;
+    if (sub != null) {
+      await sub.cancel();
+      _emit(
+        SyncStatusSnapshot(
+          code: SyncStatusCode.idle,
+          lastMessage: 'live_sync_stopped',
+          lastSuccessAt: _latest.lastSuccessAt,
+        ),
+      );
+    }
+  }
+
   CollectionReference<Map<String, dynamic>> _notesCollection(String uid) {
     return _firestore.collection('users').doc(uid).collection('notes');
   }
 
   Future<Map<String, NoteEntity>> _fetchRemoteNotes(String uid) async {
     final snapshot = await _notesCollection(uid).get();
-    final result = <String, NoteEntity>{};
-    for (final doc in snapshot.docs) {
-      final note = _fromMap(doc.id, doc.data());
-      if (note != null) {
-        result[doc.id] = note;
-      }
-    }
-    return result;
+    return _mapRemoteSnapshot(snapshot);
   }
 
   Map<String, dynamic> _toMap(NoteEntity note) {
@@ -273,6 +307,114 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
     }
   }
 
+  Map<String, NoteEntity> _mapRemoteSnapshot(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    final result = <String, NoteEntity>{};
+    for (final doc in snapshot.docs) {
+      final note = _fromMap(doc.id, doc.data());
+      if (note != null) {
+        result[doc.id] = note;
+      }
+    }
+    return result;
+  }
+
+  Future<SyncOperationResult> _pullFromRemote({
+    required String uid,
+    required String source,
+  }) async {
+    final remoteNotes = await _fetchRemoteNotes(uid);
+    return _applyRemoteMap(remoteNotes: remoteNotes, source: source);
+  }
+
+  Future<SyncOperationResult> _applyRemoteMap({
+    required Map<String, NoteEntity> remoteNotes,
+    required String source,
+  }) async {
+    final localNotes = await _localNoteRepository.getAllNotes();
+    final plan = NoteSyncMergePlanner.buildPullPlan(
+      localNotes: localNotes,
+      remoteNotes: remoteNotes,
+    );
+
+    for (final note in plan.upserts) {
+      await _localNoteRepository.upsert(note);
+    }
+    for (final id in plan.deletes) {
+      await _localNoteRepository.deleteById(id);
+    }
+
+    final now = DateTime.now();
+    _emit(
+      SyncStatusSnapshot(
+        code: source == 'live'
+            ? SyncStatusCode.liveListening
+            : SyncStatusCode.success,
+        lastMessage: _pullSuccessMessageKey(plan, source),
+        lastSuccessAt: now,
+      ),
+    );
+
+    return SyncOperationResult(
+      upserts: plan.upserts.length,
+      deletes: plan.deletes.length,
+      skippedConflicts: plan.skippedConflicts,
+      didMutate: plan.upserts.isNotEmpty || plan.deletes.isNotEmpty,
+    );
+  }
+
+  String _pullSuccessMessageKey(SyncMergePlan plan, String source) {
+    if (source == 'live') {
+      if (plan.skippedEmptyRemoteDelete) {
+        return 'live_sync_remote_empty_local_kept';
+      }
+      if (plan.skippedConflicts > 0) {
+        return 'live_sync_applied_conflicts';
+      }
+      return 'live_sync_applied';
+    }
+    if (plan.skippedEmptyRemoteDelete) {
+      return 'pull_remote_empty_local_kept';
+    }
+    if (plan.skippedConflicts > 0) {
+      return 'pull_conflicts_skipped';
+    }
+    return 'pull_complete';
+  }
+
+  Future<void> _applyLiveRemote({
+    required String uid,
+    required Map<String, NoteEntity> remoteNotes,
+  }) async {
+    if (_liveUid != uid) {
+      return;
+    }
+    if (_isApplyingLiveSync) {
+      _queuedLiveSync = true;
+      return;
+    }
+    _isApplyingLiveSync = true;
+    try {
+      await _applyRemoteMap(remoteNotes: remoteNotes, source: 'live');
+      while (_queuedLiveSync && _liveUid == uid) {
+        _queuedLiveSync = false;
+        final latestRemote = await _fetchRemoteNotes(uid);
+        await _applyRemoteMap(remoteNotes: latestRemote, source: 'live');
+      }
+    } catch (error) {
+      _emit(
+        SyncStatusSnapshot(
+          code: SyncStatusCode.error,
+          lastMessage: 'live_sync_error:${error.toString()}',
+          lastSuccessAt: _latest.lastSuccessAt,
+        ),
+      );
+    } finally {
+      _isApplyingLiveSync = false;
+    }
+  }
+
   void _emit(SyncStatusSnapshot snapshot) {
     _latest = snapshot;
     _statusController.add(snapshot);
@@ -309,4 +451,10 @@ class UnavailableSyncRepository implements SyncRepository {
   Future<SyncOperationResult> push() async {
     throw StateError('Cloud sync is not available.');
   }
+
+  @override
+  Future<void> startLiveSync() async {}
+
+  @override
+  Future<void> stopLiveSync() async {}
 }

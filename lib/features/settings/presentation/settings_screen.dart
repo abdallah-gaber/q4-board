@@ -531,6 +531,8 @@ class _SyncSection extends StatelessWidget {
         return l10n.syncStatusIdle;
       case SyncStatusCode.authRequired:
         return l10n.syncStatusAuthRequired;
+      case SyncStatusCode.liveListening:
+        return _syncLiveText(l10n, status);
       case SyncStatusCode.pushing:
         return l10n.syncStatusPushing;
       case SyncStatusCode.pulling:
@@ -560,6 +562,26 @@ class _SyncSection extends StatelessWidget {
       return l10n.syncStatusPullComplete;
     }
     return l10n.syncStatusSuccess;
+  }
+
+  String _syncLiveText(AppLocalizations l10n, SyncStatusSnapshot status) {
+    final key = status.lastMessage;
+    if (key == 'live_sync_active') {
+      return l10n.syncStatusLiveActive;
+    }
+    if (key == 'live_sync_stopped') {
+      return l10n.syncStatusLiveStopped;
+    }
+    if (key == 'live_sync_applied') {
+      return l10n.syncStatusLiveApplied;
+    }
+    if (key == 'live_sync_applied_conflicts') {
+      return l10n.syncStatusLiveAppliedConflicts;
+    }
+    if (key == 'live_sync_remote_empty_local_kept') {
+      return l10n.syncStatusPullRemoteEmptyLocalKept;
+    }
+    return l10n.syncStatusLiveActive;
   }
 
   String _errorHintText(BuildContext context, SyncActionError error) {

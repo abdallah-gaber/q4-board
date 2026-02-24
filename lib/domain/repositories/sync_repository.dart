@@ -2,6 +2,7 @@ enum SyncStatusCode {
   unavailable,
   idle,
   authRequired,
+  liveListening,
   pushing,
   pulling,
   success,
@@ -58,4 +59,8 @@ abstract interface class SyncRepository {
   Future<SyncOperationResult> push();
 
   Future<SyncOperationResult> pull();
+
+  Future<void> startLiveSync();
+
+  Future<void> stopLiveSync();
 }

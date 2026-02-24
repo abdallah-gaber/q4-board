@@ -208,6 +208,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncStatusPulling => 'Pulling cloud notes to this device...';
 
   @override
+  String get syncStatusLiveActive => 'Live sync is active';
+
+  @override
+  String get syncStatusLiveStopped => 'Live sync stopped';
+
+  @override
+  String get syncStatusLiveApplied => 'Live sync applied remote changes';
+
+  @override
+  String get syncStatusLiveAppliedConflicts =>
+      'Live sync applied (newer local changes were kept)';
+
+  @override
   String get syncStatusSuccess => 'Sync completed';
 
   @override

@@ -13,8 +13,9 @@
 
 - Firebase anonymous auth integration
 - Firestore-backed manual sync (Push / Pull)
+- Live remote-to-local sync listener and app-resume auto-pull
 - Conflict handling basics (last-write-wins with safety checks)
-- Next: background/realtime sync iteration and richer conflict UX
+- Next: richer conflict UX and selective sync controls
 
 ## Phase 3+ (Candidate)
 

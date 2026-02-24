@@ -95,6 +95,7 @@ class SyncController extends StateNotifier<SyncControllerState> {
        super(SyncControllerState.initial(bootstrapState)) {
     _authSub = _authService.watchSession().listen((session) {
       state = state.copyWith(session: session);
+      unawaited(_handleSessionChange(session));
     });
     _syncSub = _syncRepository.watchStatus().listen((syncStatus) {
       state = state.copyWith(syncStatus: syncStatus);
@@ -104,6 +105,7 @@ class SyncController extends StateNotifier<SyncControllerState> {
   final AuthService _authService;
   final SyncRepository _syncRepository;
   final Duration _operationTimeout;
+  DateTime? _lastAutoPullAt;
   late final StreamSubscription<AuthSession> _authSub;
   late final StreamSubscription<SyncStatusSnapshot> _syncSub;
 
@@ -132,6 +134,25 @@ class SyncController extends StateNotifier<SyncControllerState> {
         return;
       case null:
         return;
+    }
+  }
+
+  Future<void> onAppResumed() async {
+    if (!state.bootstrapState.isAvailable ||
+        !state.session.isAuthenticated ||
+        state.isBusy) {
+      return;
+    }
+    final now = DateTime.now();
+    if (_lastAutoPullAt != null &&
+        now.difference(_lastAutoPullAt!) < const Duration(seconds: 20)) {
+      return;
+    }
+    _lastAutoPullAt = now;
+    try {
+      await _runBusy(SyncActionType.pull, _syncRepository.pull);
+    } catch (_) {
+      // App-resume auto sync failures are surfaced in controller status/UI.
     }
   }
 
@@ -171,8 +192,33 @@ class SyncController extends StateNotifier<SyncControllerState> {
     }
   }
 
+  Future<void> _handleSessionChange(AuthSession session) async {
+    if (!state.bootstrapState.isAvailable) {
+      return;
+    }
+    if (!session.isAuthenticated) {
+      await _syncRepository.stopLiveSync();
+      _lastAutoPullAt = null;
+      return;
+    }
+    try {
+      await _syncRepository.startLiveSync();
+      await onAppResumed();
+    } catch (error) {
+      state = state.copyWith(
+        lastError: SyncActionError(
+          action: SyncActionType.pull,
+          rawError: error,
+          isTimeout: false,
+          isRetryable: true,
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
+    unawaited(_syncRepository.stopLiveSync());
     _authSub.cancel();
     _syncSub.cancel();
     super.dispose();

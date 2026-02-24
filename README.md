@@ -25,7 +25,9 @@ It helps you classify tasks into 4 quadrants and prioritize execution with a sti
 ## Phase 2 (In Progress)
 
 - Firebase anonymous authentication (settings-driven sign in/out)
-- Manual cloud sync actions (Push / Pull) backed by Firestore
+- Firestore cloud sync with manual actions (Push / Pull)
+- Live sync listener after sign-in (remote changes pulled automatically)
+- Auto-pull on app resume with throttling
 - Local-only fallback when Firebase is not configured yet
 
 ## Tech Stack
@@ -166,7 +168,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for details.
 - Desktop/Web drag can still show a visual jump/snap at drag start in some cases. This is tracked and will be improved in a coming UI iteration.
 - Minor drag-feel differences may appear across browsers because pointer/drag behavior differs by engine.
 - macOS native splash customization is limited in the current generator setup; Android/Web splash is branded, macOS currently relies on icon + default startup window.
-- Firestore sync currently uses manual `Push` / `Pull` actions from Settings (not realtime sync yet).
+- Firestore sync supports manual `Push` / `Pull` plus a live listener (remote-to-local) after sign-in.
 - If Push/Pull returns `permission-denied`, your Firestore rules are blocking `users/{uid}/notes/{noteId}` for the signed-in user.
 
 ## Quality Checks

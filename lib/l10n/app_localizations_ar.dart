@@ -208,6 +208,19 @@ class AppLocalizationsAr extends AppLocalizations {
       'جارٍ سحب الملاحظات السحابية إلى هذا الجهاز...';
 
   @override
+  String get syncStatusLiveActive => 'المزامنة الحية مفعّلة';
+
+  @override
+  String get syncStatusLiveStopped => 'تم إيقاف المزامنة الحية';
+
+  @override
+  String get syncStatusLiveApplied => 'تم تطبيق التغييرات السحابية تلقائيًا';
+
+  @override
+  String get syncStatusLiveAppliedConflicts =>
+      'تم تطبيق المزامنة الحية (مع الاحتفاظ بالتعديلات المحلية الأحدث)';
+
+  @override
   String get syncStatusSuccess => 'اكتملت المزامنة';
 
   @override

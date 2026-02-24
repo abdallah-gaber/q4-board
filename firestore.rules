@@ -56,15 +56,24 @@ service cloud.firestore {
         data.isDone is bool &&
         validOrderIndex(data.orderIndex) &&
         validTimestamp(data.createdAt) &&
-        validTimestamp(data.updatedAt);
+        validTimestamp(data.updatedAt) &&
+        data.createdAt <= data.updatedAt;
     }
 
     match /users/{userId}/notes/{noteId} {
+      function validNoteId() {
+        return noteId.size() > 0 && noteId.size() <= 128;
+      }
+
       allow read: if isOwner(userId);
-      allow create: if isOwner(userId) && validNoteData(request.resource.data);
+      allow create: if isOwner(userId) &&
+        validNoteId() &&
+        validNoteData(request.resource.data);
       allow update: if isOwner(userId) &&
+        validNoteId() &&
         validNoteData(request.resource.data) &&
-        request.resource.data.createdAt == resource.data.createdAt;
+        request.resource.data.createdAt == resource.data.createdAt &&
+        request.resource.data.updatedAt >= resource.data.updatedAt;
       allow delete: if isOwner(userId);
     }
   }

@@ -470,6 +470,30 @@ abstract class AppLocalizations {
   /// **'Pulling cloud notes to this device...'**
   String get syncStatusPulling;
 
+  /// No description provided for @syncStatusLiveActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync is active'**
+  String get syncStatusLiveActive;
+
+  /// No description provided for @syncStatusLiveStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync stopped'**
+  String get syncStatusLiveStopped;
+
+  /// No description provided for @syncStatusLiveApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync applied remote changes'**
+  String get syncStatusLiveApplied;
+
+  /// No description provided for @syncStatusLiveAppliedConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync applied (newer local changes were kept)'**
+  String get syncStatusLiveAppliedConflicts;
+
   /// No description provided for @syncStatusSuccess.
   ///
   /// In en, this message translates to:

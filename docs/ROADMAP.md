@@ -1,12 +1,13 @@
 # Roadmap
 
-## Phase 1 (Completed)
+## Phase 1 (Completed / Ongoing polish)
 
 - Local-first Eisenhower board
 - Hive persistence
 - Responsive board UX
 - AR/EN localization
 - Theme switching
+- Ongoing UI polish (icons, splash, docs, test hardening)
 
 ## Phase 2 (Planned)
 

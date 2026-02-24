@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,6 +97,7 @@ class SettingsScreen extends ConsumerWidget {
               onSignOut: () => _onSyncSignOut(context, syncController),
               onPush: () => _onSyncPush(context, syncController),
               onPull: () => _onSyncPull(context, syncController),
+              onRetry: () => _onSyncRetry(context, syncController),
             ),
           ),
           if (kDebugMode) ...[
@@ -183,13 +187,14 @@ class SettingsScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(SnackBar(content: Text(l10n.syncSignedIn)));
-    } catch (_) {
+    } catch (error, stackTrace) {
+      _logSyncError('signIn', error, stackTrace);
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(SnackBar(content: Text(l10n.syncErrorGeneric)));
+        ..showSnackBar(SnackBar(content: Text(_syncErrorMessage(l10n, error))));
     }
   }
 
@@ -206,13 +211,14 @@ class SettingsScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(SnackBar(content: Text(l10n.syncSignedOut)));
-    } catch (_) {
+    } catch (error, stackTrace) {
+      _logSyncError('signOut', error, stackTrace);
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(SnackBar(content: Text(l10n.syncErrorGeneric)));
+        ..showSnackBar(SnackBar(content: Text(_syncErrorMessage(l10n, error))));
     }
   }
 
@@ -239,13 +245,14 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      _logSyncError('push', error, stackTrace);
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(SnackBar(content: Text(l10n.syncErrorGeneric)));
+        ..showSnackBar(SnackBar(content: Text(_syncErrorMessage(l10n, error))));
     }
   }
 
@@ -272,13 +279,14 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      _logSyncError('pull', error, stackTrace);
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(SnackBar(content: Text(l10n.syncErrorGeneric)));
+        ..showSnackBar(SnackBar(content: Text(_syncErrorMessage(l10n, error))));
     }
   }
 
@@ -300,6 +308,68 @@ class SettingsScreen extends ConsumerWidget {
       ..clearSnackBars()
       ..showSnackBar(SnackBar(content: Text(l10n.demoDataLoaded(count))));
   }
+
+  void _logSyncError(String action, Object error, StackTrace stackTrace) {
+    debugPrint('Q4Board sync $action failed: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
+
+  String _syncErrorMessage(AppLocalizations l10n, Object error) {
+    if (error is TimeoutException) {
+      return l10n.syncErrorTimeout;
+    }
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'operation-not-allowed':
+          return l10n.syncErrorAuthOperationNotAllowed;
+        case 'network-request-failed':
+          return l10n.syncErrorNetwork;
+        case 'too-many-requests':
+          return l10n.syncErrorTooManyRequests;
+        default:
+          return '${l10n.syncErrorGeneric}: ${error.code}';
+      }
+    }
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'permission-denied':
+          return l10n.syncErrorPermissionDenied;
+        case 'unauthenticated':
+          return l10n.syncErrorAuthRequired;
+        case 'unavailable':
+          return l10n.syncErrorNetwork;
+        case 'failed-precondition':
+          return l10n.syncErrorFirestoreSetup;
+        default:
+          return '${l10n.syncErrorGeneric}: ${error.code}';
+      }
+    }
+    return l10n.syncErrorGeneric;
+  }
+
+  Future<void> _onSyncRetry(
+    BuildContext context,
+    SyncController controller,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await controller.retryLastAction();
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text(l10n.syncRetrySuccess)));
+    } catch (error, stackTrace) {
+      _logSyncError('retry', error, stackTrace);
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text(_syncErrorMessage(l10n, error))));
+    }
+  }
 }
 
 class _SyncSection extends StatelessWidget {
@@ -309,6 +379,7 @@ class _SyncSection extends StatelessWidget {
     required this.onSignOut,
     required this.onPush,
     required this.onPull,
+    required this.onRetry,
   });
 
   final SyncControllerState state;
@@ -316,6 +387,7 @@ class _SyncSection extends StatelessWidget {
   final VoidCallback onSignOut;
   final VoidCallback onPush;
   final VoidCallback onPull;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -394,9 +466,40 @@ class _SyncSection extends StatelessWidget {
               icon: const Icon(Icons.cloud_download_outlined),
               label: Text(l10n.syncPull),
             ),
+            OutlinedButton.icon(
+              onPressed:
+                  (!canUseCloud || state.isBusy || !state.canRetryLastAction)
+                  ? null
+                  : onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text(l10n.retryAction),
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
+        if (state.isBusy) ...[
+          const LinearProgressIndicator(minHeight: 3),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+        if (state.lastError != null) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: Theme.of(
+                context,
+              ).colorScheme.errorContainer.withValues(alpha: 0.65),
+              borderRadius: BorderRadius.circular(AppRadii.sm),
+            ),
+            child: Text(
+              _errorHintText(context, state.lastError!),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
         Row(
           children: [
             if (state.isBusy) ...[
@@ -457,6 +560,24 @@ class _SyncSection extends StatelessWidget {
       return l10n.syncStatusPullComplete;
     }
     return l10n.syncStatusSuccess;
+  }
+
+  String _errorHintText(BuildContext context, SyncActionError error) {
+    final l10n = AppLocalizations.of(context)!;
+    if (error.isTimeout) {
+      return l10n.syncErrorTimeoutHelp;
+    }
+    final raw = error.rawError.toString();
+    if (raw.contains('permission-denied')) {
+      return l10n.syncErrorPermissionDeniedHelp;
+    }
+    if (raw.contains('operation-not-allowed')) {
+      return l10n.syncErrorAuthOperationHelp;
+    }
+    if (raw.contains('network-request-failed') || raw.contains('unavailable')) {
+      return l10n.syncErrorNetworkHelp;
+    }
+    return l10n.syncErrorRetryHint;
   }
 }
 

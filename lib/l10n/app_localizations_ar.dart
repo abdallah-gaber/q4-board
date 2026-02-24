@@ -140,6 +140,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncErrorGeneric => 'فشلت عملية المزامنة السحابية';
 
   @override
+  String get syncErrorTimeout => 'انتهت مهلة المزامنة. حاول مرة أخرى.';
+
+  @override
+  String get syncErrorTimeoutHelp =>
+      'استغرقت العملية وقتًا طويلًا. تحقّق من الاتصال ثم أعد المحاولة.';
+
+  @override
+  String get syncErrorNetwork =>
+      'الشبكة غير متاحة. تحقّق من الاتصال ثم حاول مرة أخرى.';
+
+  @override
+  String get syncErrorNetworkHelp =>
+      'تم اكتشاف مشكلة في الشبكة. تحقّق من الاتصال ثم أعد المحاولة.';
+
+  @override
+  String get syncErrorPermissionDenied =>
+      'تم رفض المزامنة بواسطة قواعد Firestore';
+
+  @override
+  String get syncErrorPermissionDeniedHelp =>
+      'قواعد Firestore منعت العملية. تأكد أن القواعد تسمح بالمسار users/<uid>/notes للمستخدم الحالي.';
+
+  @override
+  String get syncErrorAuthRequired => 'يلزم تسجيل الدخول قبل المزامنة';
+
+  @override
+  String get syncErrorAuthOperationNotAllowed =>
+      'تسجيل الدخول المجهول غير مفعّل في Firebase Auth';
+
+  @override
+  String get syncErrorAuthOperationHelp =>
+      'فعّل Anonymous Sign-in من Firebase Console > Authentication > Sign-in method.';
+
+  @override
+  String get syncErrorFirestoreSetup =>
+      'قاعدة Firestore غير جاهزة لهذا المشروع بعد';
+
+  @override
+  String get syncErrorTooManyRequests =>
+      'عدد الطلبات كبير جدًا. انتظر قليلًا ثم أعد المحاولة.';
+
+  @override
+  String get syncErrorRetryHint =>
+      'يمكنك إعادة محاولة آخر عملية مزامنة بعد إصلاح السبب.';
+
+  @override
+  String get syncRetrySuccess => 'تمت إعادة محاولة عملية المزامنة';
+
+  @override
+  String get retryAction => 'إعادة المحاولة';
+
+  @override
   String get syncStatusUnavailable => 'Firebase غير متاح (وضع محلي فقط).';
 
   @override

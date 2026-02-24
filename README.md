@@ -63,6 +63,17 @@ flutterfire configure --project=q4-board-prod
 
 Then replace the placeholder `lib/firebase_options.dart` with the generated file.
 
+### Firestore rules (required for sync)
+
+Deploy the included production-oriented rules before using Push/Pull sync:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Rules file:
+- `firestore.rules`
+
 ### Run (Web)
 
 ```bash
@@ -156,6 +167,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for details.
 - Minor drag-feel differences may appear across browsers because pointer/drag behavior differs by engine.
 - macOS native splash customization is limited in the current generator setup; Android/Web splash is branded, macOS currently relies on icon + default startup window.
 - Firestore sync currently uses manual `Push` / `Pull` actions from Settings (not realtime sync yet).
+- If Push/Pull returns `permission-denied`, your Firestore rules are blocking `users/{uid}/notes/{noteId}` for the signed-in user.
 
 ## Quality Checks
 

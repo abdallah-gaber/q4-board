@@ -356,6 +356,90 @@ abstract class AppLocalizations {
   /// **'Cloud sync action failed'**
   String get syncErrorGeneric;
 
+  /// No description provided for @syncErrorTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync timed out. Please try again.'**
+  String get syncErrorTimeout;
+
+  /// No description provided for @syncErrorTimeoutHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation took too long. Check your connection and retry.'**
+  String get syncErrorTimeoutHelp;
+
+  /// No description provided for @syncErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network unavailable. Check your connection and try again.'**
+  String get syncErrorNetwork;
+
+  /// No description provided for @syncErrorNetworkHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Network issue detected. Verify connectivity, then retry.'**
+  String get syncErrorNetworkHelp;
+
+  /// No description provided for @syncErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync denied by Firestore rules'**
+  String get syncErrorPermissionDenied;
+
+  /// No description provided for @syncErrorPermissionDeniedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore rules blocked this action. Confirm rules allow users/<uid>/notes for the signed-in user.'**
+  String get syncErrorPermissionDeniedHelp;
+
+  /// No description provided for @syncErrorAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in is required before sync'**
+  String get syncErrorAuthRequired;
+
+  /// No description provided for @syncErrorAuthOperationNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous sign-in is disabled in Firebase Auth'**
+  String get syncErrorAuthOperationNotAllowed;
+
+  /// No description provided for @syncErrorAuthOperationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Anonymous sign-in in Firebase Console > Authentication > Sign-in method.'**
+  String get syncErrorAuthOperationHelp;
+
+  /// No description provided for @syncErrorFirestoreSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore is not ready for this project yet'**
+  String get syncErrorFirestoreSetup;
+
+  /// No description provided for @syncErrorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait and retry.'**
+  String get syncErrorTooManyRequests;
+
+  /// No description provided for @syncErrorRetryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can retry the last sync action after fixing the issue.'**
+  String get syncErrorRetryHint;
+
+  /// No description provided for @syncRetrySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Retried sync action'**
+  String get syncRetrySuccess;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryAction;
+
   /// No description provided for @syncStatusUnavailable.
   ///
   /// In en, this message translates to:

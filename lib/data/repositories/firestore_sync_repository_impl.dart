@@ -10,6 +10,10 @@ import '../../domain/repositories/sync_repository.dart';
 import '../services/note_sync_merge_planner.dart';
 
 class FirestoreSyncRepositoryImpl implements SyncRepository {
+  static const int _maxBatchOperations = 450;
+  static const int _maxTitleLength = 160;
+  static const int _maxDescriptionLength = 2000;
+
   FirestoreSyncRepositoryImpl({
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
@@ -54,17 +58,7 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
         remoteNotes: remoteNotes,
       );
 
-      if (plan.upserts.isNotEmpty || plan.deletes.isNotEmpty) {
-        final batch = _firestore.batch();
-        final collection = _notesCollection(uid);
-        for (final note in plan.upserts) {
-          batch.set(collection.doc(note.id), _toMap(note));
-        }
-        for (final id in plan.deletes) {
-          batch.delete(collection.doc(id));
-        }
-        await batch.commit();
-      }
+      await _commitPushPlan(uid, plan);
 
       final now = DateTime.now();
       _emit(
@@ -167,13 +161,30 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
   }
 
   Map<String, dynamic> _toMap(NoteEntity note) {
+    final title = note.title.trim();
+    if (title.isEmpty) {
+      throw StateError('Cannot sync note with empty title.');
+    }
+    if (title.length > _maxTitleLength) {
+      throw StateError('Cannot sync note title longer than $_maxTitleLength.');
+    }
+    final description = note.description?.trim();
+    if (description != null && description.length > _maxDescriptionLength) {
+      throw StateError(
+        'Cannot sync note description longer than $_maxDescriptionLength.',
+      );
+    }
+    final orderIndex = note.orderIndex.isFinite ? note.orderIndex : 0.0;
+
     return <String, dynamic>{
       'quadrantType': note.quadrantType.name,
-      'title': note.title,
-      'description': note.description,
+      'title': title,
+      'description': (description == null || description.isEmpty)
+          ? null
+          : description,
       'dueAt': note.dueAt == null ? null : Timestamp.fromDate(note.dueAt!),
       'isDone': note.isDone,
-      'orderIndex': note.orderIndex,
+      'orderIndex': orderIndex,
       'createdAt': Timestamp.fromDate(note.createdAt),
       'updatedAt': Timestamp.fromDate(note.updatedAt),
     };
@@ -199,29 +210,87 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
       return null;
     }
 
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.length > _maxTitleLength) {
+      return null;
+    }
+
     final createdAt = parseDate(data['createdAt']) ?? DateTime.now();
     final updatedAt = parseDate(data['updatedAt']) ?? createdAt;
     final dueAt = parseDate(data['dueAt']);
     final description = data['description'] as String?;
     final orderValue = data['orderIndex'];
+    final normalizedDescription = description?.trim();
+    if (normalizedDescription != null &&
+        normalizedDescription.length > _maxDescriptionLength) {
+      return null;
+    }
+    final orderIndex = orderValue is num && orderValue.toDouble().isFinite
+        ? orderValue.toDouble()
+        : 0.0;
 
     return NoteEntity(
       id: id,
       quadrantType: quadrant,
-      title: title,
-      description: (description?.trim().isEmpty ?? true) ? null : description,
+      title: trimmedTitle,
+      description: (normalizedDescription?.isEmpty ?? true)
+          ? null
+          : normalizedDescription,
       dueAt: dueAt,
       isDone: data['isDone'] as bool? ?? false,
-      orderIndex: orderValue is num ? orderValue.toDouble() : 0,
+      orderIndex: orderIndex,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
+  }
+
+  Future<void> _commitPushPlan(String uid, SyncMergePlan plan) async {
+    if (plan.upserts.isEmpty && plan.deletes.isEmpty) {
+      return;
+    }
+    final collection = _notesCollection(uid);
+    final operations = <_SyncWriteOp>[
+      ...plan.upserts.map((note) => _SyncWriteOp.upsert(note.id, _toMap(note))),
+      ...plan.deletes.map(_SyncWriteOp.delete),
+    ];
+
+    for (
+      var start = 0;
+      start < operations.length;
+      start += _maxBatchOperations
+    ) {
+      final end = (start + _maxBatchOperations).clamp(0, operations.length);
+      final batch = _firestore.batch();
+      for (final op in operations.sublist(start, end)) {
+        final doc = collection.doc(op.noteId);
+        if (op.delete) {
+          batch.delete(doc);
+        } else {
+          batch.set(doc, op.data!);
+        }
+      }
+      await batch.commit();
+    }
   }
 
   void _emit(SyncStatusSnapshot snapshot) {
     _latest = snapshot;
     _statusController.add(snapshot);
   }
+}
+
+class _SyncWriteOp {
+  const _SyncWriteOp._({required this.noteId, required this.delete, this.data});
+
+  final String noteId;
+  final bool delete;
+  final Map<String, dynamic>? data;
+
+  factory _SyncWriteOp.upsert(String noteId, Map<String, dynamic> data) =>
+      _SyncWriteOp._(noteId: noteId, delete: false, data: data);
+
+  factory _SyncWriteOp.delete(String noteId) =>
+      _SyncWriteOp._(noteId: noteId, delete: true);
 }
 
 class UnavailableSyncRepository implements SyncRepository {

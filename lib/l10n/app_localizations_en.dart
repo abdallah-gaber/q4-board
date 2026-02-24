@@ -140,6 +140,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncErrorGeneric => 'Cloud sync action failed';
 
   @override
+  String get syncErrorTimeout => 'Sync timed out. Please try again.';
+
+  @override
+  String get syncErrorTimeoutHelp =>
+      'The operation took too long. Check your connection and retry.';
+
+  @override
+  String get syncErrorNetwork =>
+      'Network unavailable. Check your connection and try again.';
+
+  @override
+  String get syncErrorNetworkHelp =>
+      'Network issue detected. Verify connectivity, then retry.';
+
+  @override
+  String get syncErrorPermissionDenied =>
+      'Cloud sync denied by Firestore rules';
+
+  @override
+  String get syncErrorPermissionDeniedHelp =>
+      'Firestore rules blocked this action. Confirm rules allow users/<uid>/notes for the signed-in user.';
+
+  @override
+  String get syncErrorAuthRequired => 'Sign in is required before sync';
+
+  @override
+  String get syncErrorAuthOperationNotAllowed =>
+      'Anonymous sign-in is disabled in Firebase Auth';
+
+  @override
+  String get syncErrorAuthOperationHelp =>
+      'Enable Anonymous sign-in in Firebase Console > Authentication > Sign-in method.';
+
+  @override
+  String get syncErrorFirestoreSetup =>
+      'Firestore is not ready for this project yet';
+
+  @override
+  String get syncErrorTooManyRequests =>
+      'Too many requests. Please wait and retry.';
+
+  @override
+  String get syncErrorRetryHint =>
+      'You can retry the last sync action after fixing the issue.';
+
+  @override
+  String get syncRetrySuccess => 'Retried sync action';
+
+  @override
+  String get retryAction => 'Retry';
+
+  @override
   String get syncStatusUnavailable =>
       'Firebase is unavailable (local-only mode).';
 

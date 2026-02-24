@@ -19,6 +19,15 @@ flutterfire configure --project=q4-board-prod
 The repo may include a placeholder `lib/firebase_options.dart` for local-only mode.
 Replace it with the generated FlutterFire file when working on cloud features.
 
+## Firestore Rules
+
+- Rules are defined in `firestore.rules`.
+- Deploy before testing sync:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
 ## Development Guidelines
 
 - Keep changes scoped and reviewable.

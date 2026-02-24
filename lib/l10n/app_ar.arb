@@ -31,6 +31,66 @@
   "defaultShowDone": "الإعداد الافتراضي لإظهار المكتمل",
   "syncComingSoon": "المزامنة (قريبًا)",
   "syncComingSoonDesc": "تسجيل الدخول والمزامنة السحابية عبر Firebase ستضاف في المرحلة الثانية.",
+  "syncSectionTitle": "المزامنة السحابية",
+  "syncUnavailable": "المزامنة السحابية غير متاحة",
+  "syncConnected": "المزامنة السحابية جاهزة",
+  "syncNotSignedIn": "سجّل الدخول لتفعيل المزامنة السحابية",
+  "syncNotConfiguredHelp": "لم يتم إعداد Firebase بعد. شغّل FlutterFire configure واستبدل ملف firebase_options.dart.",
+  "syncSignIn": "تسجيل الدخول",
+  "syncSignOut": "تسجيل الخروج",
+  "syncPush": "رفع",
+  "syncPull": "سحب",
+  "syncSignedIn": "تم تسجيل الدخول بنجاح",
+  "syncSignedOut": "تم تسجيل الخروج",
+  "syncErrorGeneric": "فشلت عملية المزامنة السحابية",
+  "syncStatusUnavailable": "Firebase غير متاح (وضع محلي فقط).",
+  "syncStatusIdle": "جاهز",
+  "syncStatusAuthRequired": "يلزم تسجيل الدخول",
+  "syncStatusPushing": "جارٍ رفع الملاحظات المحلية إلى السحابة...",
+  "syncStatusPulling": "جارٍ سحب الملاحظات السحابية إلى هذا الجهاز...",
+  "syncStatusSuccess": "اكتملت المزامنة",
+  "syncStatusError": "فشلت المزامنة",
+  "syncStatusPushComplete": "اكتمل الرفع",
+  "syncStatusPullComplete": "اكتمل السحب",
+  "syncStatusPushCompleteConflicts": "اكتمل الرفع (تم الاحتفاظ بالتعديلات الأحدث في السحابة)",
+  "syncStatusPullCompleteConflicts": "اكتمل السحب (تم الاحتفاظ بالتعديلات الأحدث محليًا)",
+  "syncStatusPullRemoteEmptyLocalKept": "السحابة فارغة؛ تم الاحتفاظ بالملاحظات المحلية (حماية من الحذف)",
+  "syncUserId": "المستخدم: {userId}",
+  "@syncUserId": {
+    "placeholders": {
+      "userId": {
+        "type": "String"
+      }
+    }
+  },
+  "syncPushDone": "اكتمل الرفع: تم تحديث {upserts}، وحذف {deletes}، وتخطي {skipped} تعارضات",
+  "@syncPushDone": {
+    "placeholders": {
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "syncPullDone": "اكتمل السحب: تم تحديث {upserts}، وحذف {deletes} محليًا، وتخطي {skipped} تعارضات",
+  "@syncPullDone": {
+    "placeholders": {
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
   "q1Title": "مهم وعاجل",
   "q2Title": "مهم وغير عاجل",
   "q3Title": "غير مهم وعاجل",

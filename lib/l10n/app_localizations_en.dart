@@ -103,6 +103,98 @@ class AppLocalizationsEn extends AppLocalizations {
       'Firebase auth + cloud sync will be added in Phase 2.';
 
   @override
+  String get syncSectionTitle => 'Cloud Sync';
+
+  @override
+  String get syncUnavailable => 'Cloud sync unavailable';
+
+  @override
+  String get syncConnected => 'Cloud sync ready';
+
+  @override
+  String get syncNotSignedIn => 'Sign in to enable cloud sync';
+
+  @override
+  String get syncNotConfiguredHelp =>
+      'Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.';
+
+  @override
+  String get syncSignIn => 'Sign in';
+
+  @override
+  String get syncSignOut => 'Sign out';
+
+  @override
+  String get syncPush => 'Push';
+
+  @override
+  String get syncPull => 'Pull';
+
+  @override
+  String get syncSignedIn => 'Signed in successfully';
+
+  @override
+  String get syncSignedOut => 'Signed out';
+
+  @override
+  String get syncErrorGeneric => 'Cloud sync action failed';
+
+  @override
+  String get syncStatusUnavailable =>
+      'Firebase is unavailable (local-only mode).';
+
+  @override
+  String get syncStatusIdle => 'Idle';
+
+  @override
+  String get syncStatusAuthRequired => 'Authentication required';
+
+  @override
+  String get syncStatusPushing => 'Pushing local notes to cloud...';
+
+  @override
+  String get syncStatusPulling => 'Pulling cloud notes to this device...';
+
+  @override
+  String get syncStatusSuccess => 'Sync completed';
+
+  @override
+  String get syncStatusError => 'Sync failed';
+
+  @override
+  String get syncStatusPushComplete => 'Push completed';
+
+  @override
+  String get syncStatusPullComplete => 'Pull completed';
+
+  @override
+  String get syncStatusPushCompleteConflicts =>
+      'Push completed (newer cloud changes were kept)';
+
+  @override
+  String get syncStatusPullCompleteConflicts =>
+      'Pull completed (newer local changes were kept)';
+
+  @override
+  String get syncStatusPullRemoteEmptyLocalKept =>
+      'Cloud is empty; local notes were kept (safety check)';
+
+  @override
+  String syncUserId(String userId) {
+    return 'User: $userId';
+  }
+
+  @override
+  String syncPushDone(int upserts, int deletes, int skipped) {
+    return 'Push complete: $upserts updated, $deletes removed, $skipped conflicts skipped';
+  }
+
+  @override
+  String syncPullDone(int upserts, int deletes, int skipped) {
+    return 'Pull complete: $upserts updated, $deletes removed locally, $skipped conflicts skipped';
+  }
+
+  @override
   String get q1Title => 'Important & Urgent';
 
   @override

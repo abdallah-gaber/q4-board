@@ -103,6 +103,98 @@ class AppLocalizationsAr extends AppLocalizations {
       'تسجيل الدخول والمزامنة السحابية عبر Firebase ستضاف في المرحلة الثانية.';
 
   @override
+  String get syncSectionTitle => 'المزامنة السحابية';
+
+  @override
+  String get syncUnavailable => 'المزامنة السحابية غير متاحة';
+
+  @override
+  String get syncConnected => 'المزامنة السحابية جاهزة';
+
+  @override
+  String get syncNotSignedIn => 'سجّل الدخول لتفعيل المزامنة السحابية';
+
+  @override
+  String get syncNotConfiguredHelp =>
+      'لم يتم إعداد Firebase بعد. شغّل FlutterFire configure واستبدل ملف firebase_options.dart.';
+
+  @override
+  String get syncSignIn => 'تسجيل الدخول';
+
+  @override
+  String get syncSignOut => 'تسجيل الخروج';
+
+  @override
+  String get syncPush => 'رفع';
+
+  @override
+  String get syncPull => 'سحب';
+
+  @override
+  String get syncSignedIn => 'تم تسجيل الدخول بنجاح';
+
+  @override
+  String get syncSignedOut => 'تم تسجيل الخروج';
+
+  @override
+  String get syncErrorGeneric => 'فشلت عملية المزامنة السحابية';
+
+  @override
+  String get syncStatusUnavailable => 'Firebase غير متاح (وضع محلي فقط).';
+
+  @override
+  String get syncStatusIdle => 'جاهز';
+
+  @override
+  String get syncStatusAuthRequired => 'يلزم تسجيل الدخول';
+
+  @override
+  String get syncStatusPushing => 'جارٍ رفع الملاحظات المحلية إلى السحابة...';
+
+  @override
+  String get syncStatusPulling =>
+      'جارٍ سحب الملاحظات السحابية إلى هذا الجهاز...';
+
+  @override
+  String get syncStatusSuccess => 'اكتملت المزامنة';
+
+  @override
+  String get syncStatusError => 'فشلت المزامنة';
+
+  @override
+  String get syncStatusPushComplete => 'اكتمل الرفع';
+
+  @override
+  String get syncStatusPullComplete => 'اكتمل السحب';
+
+  @override
+  String get syncStatusPushCompleteConflicts =>
+      'اكتمل الرفع (تم الاحتفاظ بالتعديلات الأحدث في السحابة)';
+
+  @override
+  String get syncStatusPullCompleteConflicts =>
+      'اكتمل السحب (تم الاحتفاظ بالتعديلات الأحدث محليًا)';
+
+  @override
+  String get syncStatusPullRemoteEmptyLocalKept =>
+      'السحابة فارغة؛ تم الاحتفاظ بالملاحظات المحلية (حماية من الحذف)';
+
+  @override
+  String syncUserId(String userId) {
+    return 'المستخدم: $userId';
+  }
+
+  @override
+  String syncPushDone(int upserts, int deletes, int skipped) {
+    return 'اكتمل الرفع: تم تحديث $upserts، وحذف $deletes، وتخطي $skipped تعارضات';
+  }
+
+  @override
+  String syncPullDone(int upserts, int deletes, int skipped) {
+    return 'اكتمل السحب: تم تحديث $upserts، وحذف $deletes محليًا، وتخطي $skipped تعارضات';
+  }
+
+  @override
   String get q1Title => 'مهم وعاجل';
 
   @override

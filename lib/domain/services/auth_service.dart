@@ -5,8 +5,14 @@ class AuthSession {
   final bool isAuthenticated;
 }
 
+enum AuthAvailability { enabled, unavailable }
+
 abstract interface class AuthService {
   Stream<AuthSession> watchSession();
+
+  AuthSession get currentSession;
+
+  AuthAvailability get availability;
 
   Future<void> signIn();
 

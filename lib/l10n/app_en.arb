@@ -31,6 +31,66 @@
   "defaultShowDone": "Default show done",
   "syncComingSoon": "Sync (coming soon)",
   "syncComingSoonDesc": "Firebase auth + cloud sync will be added in Phase 2.",
+  "syncSectionTitle": "Cloud Sync",
+  "syncUnavailable": "Cloud sync unavailable",
+  "syncConnected": "Cloud sync ready",
+  "syncNotSignedIn": "Sign in to enable cloud sync",
+  "syncNotConfiguredHelp": "Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.",
+  "syncSignIn": "Sign in",
+  "syncSignOut": "Sign out",
+  "syncPush": "Push",
+  "syncPull": "Pull",
+  "syncSignedIn": "Signed in successfully",
+  "syncSignedOut": "Signed out",
+  "syncErrorGeneric": "Cloud sync action failed",
+  "syncStatusUnavailable": "Firebase is unavailable (local-only mode).",
+  "syncStatusIdle": "Idle",
+  "syncStatusAuthRequired": "Authentication required",
+  "syncStatusPushing": "Pushing local notes to cloud...",
+  "syncStatusPulling": "Pulling cloud notes to this device...",
+  "syncStatusSuccess": "Sync completed",
+  "syncStatusError": "Sync failed",
+  "syncStatusPushComplete": "Push completed",
+  "syncStatusPullComplete": "Pull completed",
+  "syncStatusPushCompleteConflicts": "Push completed (newer cloud changes were kept)",
+  "syncStatusPullCompleteConflicts": "Pull completed (newer local changes were kept)",
+  "syncStatusPullRemoteEmptyLocalKept": "Cloud is empty; local notes were kept (safety check)",
+  "syncUserId": "User: {userId}",
+  "@syncUserId": {
+    "placeholders": {
+      "userId": {
+        "type": "String"
+      }
+    }
+  },
+  "syncPushDone": "Push complete: {upserts} updated, {deletes} removed, {skipped} conflicts skipped",
+  "@syncPushDone": {
+    "placeholders": {
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "syncPullDone": "Pull complete: {upserts} updated, {deletes} removed locally, {skipped} conflicts skipped",
+  "@syncPullDone": {
+    "placeholders": {
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
   "q1Title": "Important & Urgent",
   "q2Title": "Important & Not Urgent",
   "q3Title": "Not Important & Urgent",

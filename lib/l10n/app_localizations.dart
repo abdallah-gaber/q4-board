@@ -284,6 +284,168 @@ abstract class AppLocalizations {
   /// **'Firebase auth + cloud sync will be added in Phase 2.'**
   String get syncComingSoonDesc;
 
+  /// No description provided for @syncSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync'**
+  String get syncSectionTitle;
+
+  /// No description provided for @syncUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync unavailable'**
+  String get syncUnavailable;
+
+  /// No description provided for @syncConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync ready'**
+  String get syncConnected;
+
+  /// No description provided for @syncNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to enable cloud sync'**
+  String get syncNotSignedIn;
+
+  /// No description provided for @syncNotConfiguredHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.'**
+  String get syncNotConfiguredHelp;
+
+  /// No description provided for @syncSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get syncSignIn;
+
+  /// No description provided for @syncSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get syncSignOut;
+
+  /// No description provided for @syncPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Push'**
+  String get syncPush;
+
+  /// No description provided for @syncPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull'**
+  String get syncPull;
+
+  /// No description provided for @syncSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in successfully'**
+  String get syncSignedIn;
+
+  /// No description provided for @syncSignedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed out'**
+  String get syncSignedOut;
+
+  /// No description provided for @syncErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync action failed'**
+  String get syncErrorGeneric;
+
+  /// No description provided for @syncStatusUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase is unavailable (local-only mode).'**
+  String get syncStatusUnavailable;
+
+  /// No description provided for @syncStatusIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Idle'**
+  String get syncStatusIdle;
+
+  /// No description provided for @syncStatusAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication required'**
+  String get syncStatusAuthRequired;
+
+  /// No description provided for @syncStatusPushing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pushing local notes to cloud...'**
+  String get syncStatusPushing;
+
+  /// No description provided for @syncStatusPulling.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulling cloud notes to this device...'**
+  String get syncStatusPulling;
+
+  /// No description provided for @syncStatusSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed'**
+  String get syncStatusSuccess;
+
+  /// No description provided for @syncStatusError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed'**
+  String get syncStatusError;
+
+  /// No description provided for @syncStatusPushComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Push completed'**
+  String get syncStatusPushComplete;
+
+  /// No description provided for @syncStatusPullComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull completed'**
+  String get syncStatusPullComplete;
+
+  /// No description provided for @syncStatusPushCompleteConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Push completed (newer cloud changes were kept)'**
+  String get syncStatusPushCompleteConflicts;
+
+  /// No description provided for @syncStatusPullCompleteConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull completed (newer local changes were kept)'**
+  String get syncStatusPullCompleteConflicts;
+
+  /// No description provided for @syncStatusPullRemoteEmptyLocalKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud is empty; local notes were kept (safety check)'**
+  String get syncStatusPullRemoteEmptyLocalKept;
+
+  /// No description provided for @syncUserId.
+  ///
+  /// In en, this message translates to:
+  /// **'User: {userId}'**
+  String syncUserId(String userId);
+
+  /// No description provided for @syncPushDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Push complete: {upserts} updated, {deletes} removed, {skipped} conflicts skipped'**
+  String syncPushDone(int upserts, int deletes, int skipped);
+
+  /// No description provided for @syncPullDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull complete: {upserts} updated, {deletes} removed locally, {skipped} conflicts skipped'**
+  String syncPullDone(int upserts, int deletes, int skipped);
+
   /// No description provided for @q1Title.
   ///
   /// In en, this message translates to:

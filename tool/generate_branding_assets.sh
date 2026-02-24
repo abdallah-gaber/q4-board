@@ -22,9 +22,15 @@ magick -size 1024x1024 xc:none \
   -draw 'roundrectangle 210,785 620,835 22,22' \
   "$ICON_OUT"
 
-magick "$ICON_OUT" -resize 640x640 \
-  \( -size 1200x1200 xc:none -fill '#FFFFFF' -draw 'roundrectangle 0,0 1199,1199 260,260' \) \
-  -gravity center -composite "$SPLASH_OUT"
+# Splash mark: compose a soft paper tile under the icon (correct order) and
+# force PNG32 to avoid accidental grayscale/1-bit output.
+magick \
+  \( -size 1200x1200 xc:none -fill '#EEF3F9' -stroke '#DCE5F0' -strokewidth 3 \
+     -draw 'roundrectangle 0,0 1199,1199 260,260' \) \
+  \( "$ICON_OUT" -resize 640x640 \) \
+  -gravity center -composite \
+  -resize 640x640 \
+  PNG32:"$SPLASH_OUT"
 
 echo "Generated: $ICON_OUT"
 echo "Generated: $SPLASH_OUT"

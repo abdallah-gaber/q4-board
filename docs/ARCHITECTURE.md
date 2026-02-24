@@ -20,6 +20,13 @@ Q4 Board uses a feature-first structure with clear domain/data boundaries.
 - Schema/version metadata is tracked through a meta box.
 - Local repair and recovery paths are implemented for corrupted note records.
 
+## Cloud Sync (Phase 2)
+
+- Firebase bootstrap is runtime-safe: app falls back to local-only mode when `firebase_options.dart` is still a placeholder.
+- Auth uses Firebase anonymous sign-in for initial cross-device sync support.
+- Firestore sync is currently manual (`Push` / `Pull`) from Settings.
+- Merge behavior uses last-write-wins by `updatedAt` with a safety guard that avoids wiping local notes when remote is empty.
+
 ## Testing Strategy
 
 - `test/`: unit and widget tests for repositories/controllers/UI rendering
@@ -31,4 +38,4 @@ Q4 Board uses a feature-first structure with clear domain/data boundaries.
 - Android
 - macOS
 
-(Phase 2 sync/auth is intentionally not implemented in this phase.)
+(Phase 2 is currently in progress; auth + manual sync foundations are now present.)

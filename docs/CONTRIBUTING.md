@@ -9,6 +9,16 @@ flutter test
 flutter test integration_test/app_smoke_test.dart -d macos
 ```
 
+## Firebase (Phase 2) Local Setup
+
+```bash
+dart pub global activate flutterfire_cli
+flutterfire configure --project=q4-board-prod
+```
+
+The repo may include a placeholder `lib/firebase_options.dart` for local-only mode.
+Replace it with the generated FlutterFire file when working on cloud features.
+
 ## Development Guidelines
 
 - Keep changes scoped and reviewable.

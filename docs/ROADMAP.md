@@ -9,11 +9,12 @@
 - Theme switching
 - Ongoing UI polish (icons, splash, docs, test hardening)
 
-## Phase 2 (Planned)
+## Phase 2 (In Progress)
 
-- Auth integration
-- Cloud sync across devices
-- Conflict handling basics
+- Firebase anonymous auth integration
+- Firestore-backed manual sync (Push / Pull)
+- Conflict handling basics (last-write-wins with safety checks)
+- Next: background/realtime sync iteration and richer conflict UX
 
 ## Phase 3+ (Candidate)
 

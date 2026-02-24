@@ -18,6 +18,12 @@ Q4 Board uses a feature-first structure with clear domain/data boundaries.
 
 - Hive boxes store notes and app settings.
 - Schema/version metadata is tracked through a meta box.
+- Local repair and recovery paths are implemented for corrupted note records.
+
+## Testing Strategy
+
+- `test/`: unit and widget tests for repositories/controllers/UI rendering
+- `integration_test/`: smoke flows for core user journeys (add note/filter behavior and future regression coverage)
 
 ## Platform Support
 

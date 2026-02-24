@@ -30,20 +30,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'REPLACE_WITH_FLUTTERFIRE_WEB_API_KEY',
-    appId: 'REPLACE_WITH_FLUTTERFIRE_WEB_APP_ID',
-    messagingSenderId: 'REPLACE_WITH_FLUTTERFIRE_SENDER_ID',
+    apiKey: 'AIzaSyBnEZWP70yCDPM3ONchf9xeyPosIP42JAk',
+    appId: '1:958578639713:web:42bd1e8cd574e3c8e9bb20',
+    messagingSenderId: '958578639713',
     projectId: 'q4-board-prod',
-    authDomain: 'REPLACE_WITH_FLUTTERFIRE_AUTH_DOMAIN',
-    storageBucket: 'REPLACE_WITH_FLUTTERFIRE_STORAGE_BUCKET',
+    authDomain: 'q4-board-prod.firebaseapp.com',
+    storageBucket: 'q4-board-prod.firebasestorage.app',
+    measurementId: 'G-MKGE8YDZZ8',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'REPLACE_WITH_FLUTTERFIRE_ANDROID_API_KEY',
-    appId: 'REPLACE_WITH_FLUTTERFIRE_ANDROID_APP_ID',
-    messagingSenderId: 'REPLACE_WITH_FLUTTERFIRE_SENDER_ID',
+    apiKey: 'AIzaSyDum1DVgECpwQpAox4gsMUmtlSaiiX_D7s',
+    appId: '1:958578639713:android:fbe5cdd83f53a299e9bb20',
+    messagingSenderId: '958578639713',
     projectId: 'q4-board-prod',
-    storageBucket: 'REPLACE_WITH_FLUTTERFIRE_STORAGE_BUCKET',
+    storageBucket: 'q4-board-prod.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -56,11 +57,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'REPLACE_WITH_FLUTTERFIRE_MACOS_API_KEY',
-    appId: 'REPLACE_WITH_FLUTTERFIRE_MACOS_APP_ID',
-    messagingSenderId: 'REPLACE_WITH_FLUTTERFIRE_SENDER_ID',
+    apiKey: 'AIzaSyBGxE62c9WJVpCoF8UU2Uxygn5r4ZliUUI',
+    appId: '1:958578639713:ios:c86f4489bc2820dce9bb20',
+    messagingSenderId: '958578639713',
     projectId: 'q4-board-prod',
-    storageBucket: 'REPLACE_WITH_FLUTTERFIRE_STORAGE_BUCKET',
+    storageBucket: 'q4-board-prod.firebasestorage.app',
     iosBundleId: 'dev.abdallahgaber.q4board',
   );
+
 }

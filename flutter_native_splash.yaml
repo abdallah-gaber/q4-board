@@ -1,0 +1,15 @@
+flutter_native_splash:
+  color: "#F4F6F9"
+  image: assets/branding/q4_splash_mark.png
+  color_dark: "#111418"
+  image_dark: assets/branding/q4_splash_mark.png
+
+  android_12:
+    color: "#F4F6F9"
+    image: assets/branding/q4_splash_mark.png
+    color_dark: "#111418"
+    image_dark: assets/branding/q4_splash_mark.png
+
+  web: true
+  android: true
+  ios: false

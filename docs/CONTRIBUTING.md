@@ -7,6 +7,8 @@ flutter pub get
 flutter analyze
 flutter test
 flutter test integration_test/app_smoke_test.dart -d macos
+# Optional (requires Firebase Emulator Suite running)
+flutter test integration_test/firebase_sync_emulator_test.dart -d macos --dart-define=RUN_FIREBASE_EMULATOR_SYNC_TEST=true
 ```
 
 ## Firebase (Phase 2) Local Setup
@@ -27,6 +29,16 @@ Replace it with the generated FlutterFire file when working on cloud features.
 ```bash
 firebase deploy --only firestore:rules
 ```
+
+## Firebase Emulator Sync Test (Phase 2)
+
+Start the local emulators before running the emulator integration test:
+
+```bash
+firebase emulators:start --only auth,firestore
+```
+
+The test is skipped by default unless `RUN_FIREBASE_EMULATOR_SYNC_TEST=true` is provided.
 
 ## Development Guidelines
 
@@ -56,3 +68,4 @@ If macOS integration tests fail with a codesign "resource fork / Finder informat
 - Confirm `flutter analyze` and `flutter test` pass locally.
 - Prefer adding/maintaining integration smoke tests for critical user flows.
 - For sync changes, cover timeout/retry and preference-driven behavior in controller tests.
+- For sync changes, also verify conflict activity entries and any auto-sync behavior (debounce/suppression) in controller tests.

@@ -27,13 +27,15 @@ Q4 Board uses a feature-first structure with clear domain/data boundaries.
 - Firestore sync supports manual (`Push` / `Pull`) actions from Settings.
 - A Firestore snapshot listener can apply remote changes to local storage after sign-in (live remote-to-local sync).
 - App resume triggers a throttled auto-pull to reduce stale local state after backgrounding.
+- Optional debounced auto-push can send local edits to Firestore (disabled by default).
 - Sync behavior preferences and sync metadata (last sync time/result) are persisted in the app settings store.
+- Sync activity history (including conflict note IDs) is tracked in controller state for troubleshooting UI.
 - Merge behavior uses last-write-wins by `updatedAt` with a safety guard that avoids wiping local notes when remote is empty.
 
 ## Testing Strategy
 
 - `test/`: unit and widget tests for repositories/controllers/UI rendering
-- `integration_test/`: smoke flows for core user journeys (add note/filter behavior and future regression coverage)
+- `integration_test/`: UI smoke flow plus optional Firebase Emulator sync roundtrip test
 
 ## Platform Support
 

@@ -16,7 +16,9 @@
 - Live remote-to-local sync listener and app-resume auto-pull
 - Conflict handling basics (last-write-wins with safety checks)
 - Selective sync controls and persisted sync status metadata
-- Next: richer conflict UX (per-note visibility / resolution affordances)
+- Conflict activity history + per-note conflict details in Settings
+- Optional auto-push for local changes (debounced; default off)
+- Next: emulator-backed sync CI/test automation and conflict resolution UX (beyond last-write-wins visibility)
 
 ## Phase 3+ (Candidate)
 

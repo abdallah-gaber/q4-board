@@ -42,6 +42,24 @@ class SettingsController extends StateNotifier<AppSettingsEntity> {
     );
   }
 
+  Future<void> setCloudSyncEnabled(bool value) async {
+    await _settingsRepository.saveSettings(
+      state.copyWith(cloudSyncEnabled: value),
+    );
+  }
+
+  Future<void> setLiveSyncEnabled(bool value) async {
+    await _settingsRepository.saveSettings(
+      state.copyWith(liveSyncEnabled: value),
+    );
+  }
+
+  Future<void> setAutoSyncOnResumeEnabled(bool value) async {
+    await _settingsRepository.saveSettings(
+      state.copyWith(autoSyncOnResumeEnabled: value),
+    );
+  }
+
   @override
   void dispose() {
     _subscription.cancel();

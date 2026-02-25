@@ -123,6 +123,9 @@ void main() {
       themePreference: ThemePreference.dark,
       languageMode: AppLanguageMode.arabic,
       defaultShowDone: false,
+      cloudSyncEnabled: false,
+      liveSyncEnabled: false,
+      autoSyncOnResumeEnabled: false,
     );
 
     await settingsRepository.saveSettings(settings);
@@ -131,5 +134,8 @@ void main() {
     expect(read.themePreference, ThemePreference.dark);
     expect(read.languageMode, AppLanguageMode.arabic);
     expect(read.defaultShowDone, isFalse);
+    expect(read.cloudSyncEnabled, isFalse);
+    expect(read.liveSyncEnabled, isFalse);
+    expect(read.autoSyncOnResumeEnabled, isFalse);
   });
 }

@@ -15,7 +15,8 @@
 - Firestore-backed manual sync (Push / Pull)
 - Live remote-to-local sync listener and app-resume auto-pull
 - Conflict handling basics (last-write-wins with safety checks)
-- Next: richer conflict UX and selective sync controls
+- Selective sync controls and persisted sync status metadata
+- Next: richer conflict UX (per-note visibility / resolution affordances)
 
 ## Phase 3+ (Candidate)
 

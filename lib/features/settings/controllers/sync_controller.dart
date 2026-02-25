@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/firebase/firebase_bootstrap.dart';
 import '../../../core/providers/app_providers.dart';
+import '../../../domain/entities/app_settings_entity.dart';
+import '../../../domain/repositories/settings_repository.dart';
 import '../../../domain/repositories/sync_repository.dart';
 import '../../../domain/services/auth_service.dart';
 
@@ -12,6 +14,7 @@ final syncControllerProvider =
       (ref) => SyncController(
         authService: ref.watch(authServiceProvider),
         syncRepository: ref.watch(syncRepositoryProvider),
+        settingsRepository: ref.watch(settingsRepositoryProvider),
         bootstrapState: ref.watch(firebaseBootstrapStateProvider),
       ),
     );
@@ -87,25 +90,41 @@ class SyncController extends StateNotifier<SyncControllerState> {
   SyncController({
     required AuthService authService,
     required SyncRepository syncRepository,
+    required SettingsRepository settingsRepository,
     required FirebaseBootstrapState bootstrapState,
     Duration operationTimeout = const Duration(seconds: 20),
   }) : _authService = authService,
        _syncRepository = syncRepository,
+       _settingsRepository = settingsRepository,
        _operationTimeout = operationTimeout,
        super(SyncControllerState.initial(bootstrapState)) {
+    _settingsSub = _settingsRepository.watchSettings().listen((settings) {
+      _settings = settings;
+      unawaited(_applySyncPreferenceChanges());
+    });
     _authSub = _authService.watchSession().listen((session) {
       state = state.copyWith(session: session);
       unawaited(_handleSessionChange(session));
     });
     _syncSub = _syncRepository.watchStatus().listen((syncStatus) {
       state = state.copyWith(syncStatus: syncStatus);
+      unawaited(_persistSyncMetadataIfNeeded(syncStatus));
     });
   }
 
   final AuthService _authService;
   final SyncRepository _syncRepository;
+  final SettingsRepository _settingsRepository;
   final Duration _operationTimeout;
+  AppSettingsEntity _settings = AppSettingsEntity.defaults();
   DateTime? _lastAutoPullAt;
+  bool _liveSyncRunning = false;
+  bool _applyingPreferences = false;
+  bool _pendingPreferences = false;
+  SyncStatusSnapshot? _lastPersistedSuccessStatus;
+  bool _persistingSyncMetadata = false;
+  bool _pendingPersistSyncMetadata = false;
+  late final StreamSubscription<AppSettingsEntity> _settingsSub;
   late final StreamSubscription<AuthSession> _authSub;
   late final StreamSubscription<SyncStatusSnapshot> _syncSub;
 
@@ -140,7 +159,9 @@ class SyncController extends StateNotifier<SyncControllerState> {
   Future<void> onAppResumed() async {
     if (!state.bootstrapState.isAvailable ||
         !state.session.isAuthenticated ||
-        state.isBusy) {
+        state.isBusy ||
+        !_settings.cloudSyncEnabled ||
+        !_settings.autoSyncOnResumeEnabled) {
       return;
     }
     final now = DateTime.now();
@@ -197,13 +218,15 @@ class SyncController extends StateNotifier<SyncControllerState> {
       return;
     }
     if (!session.isAuthenticated) {
-      await _syncRepository.stopLiveSync();
+      await _stopLiveSyncIfNeeded();
       _lastAutoPullAt = null;
       return;
     }
     try {
-      await _syncRepository.startLiveSync();
-      await onAppResumed();
+      await _applySyncPreferenceChanges();
+      if (_settings.cloudSyncEnabled) {
+        await onAppResumed();
+      }
     } catch (error) {
       state = state.copyWith(
         lastError: SyncActionError(
@@ -216,9 +239,96 @@ class SyncController extends StateNotifier<SyncControllerState> {
     }
   }
 
+  Future<void> _applySyncPreferenceChanges() async {
+    if (_applyingPreferences) {
+      _pendingPreferences = true;
+      return;
+    }
+    _applyingPreferences = true;
+    try {
+      do {
+        _pendingPreferences = false;
+        final shouldRunLiveSync =
+            state.bootstrapState.isAvailable &&
+            state.session.isAuthenticated &&
+            _settings.cloudSyncEnabled &&
+            _settings.liveSyncEnabled;
+        if (shouldRunLiveSync) {
+          await _startLiveSyncIfNeeded();
+        } else {
+          await _stopLiveSyncIfNeeded();
+        }
+      } while (_pendingPreferences);
+    } finally {
+      _applyingPreferences = false;
+    }
+  }
+
+  Future<void> _startLiveSyncIfNeeded() async {
+    if (_liveSyncRunning) {
+      return;
+    }
+    await _syncRepository.startLiveSync();
+    _liveSyncRunning = true;
+  }
+
+  Future<void> _stopLiveSyncIfNeeded() async {
+    if (!_liveSyncRunning) {
+      return;
+    }
+    await _syncRepository.stopLiveSync();
+    _liveSyncRunning = false;
+  }
+
+  Future<void> _persistSyncMetadataIfNeeded(
+    SyncStatusSnapshot syncStatus,
+  ) async {
+    final isSuccessLike =
+        syncStatus.code == SyncStatusCode.success ||
+        syncStatus.code == SyncStatusCode.liveListening;
+    if (!isSuccessLike || syncStatus.lastSuccessAt == null) {
+      return;
+    }
+    final messageKey = syncStatus.lastMessage;
+    if (messageKey == 'live_sync_active' || messageKey == 'live_sync_stopped') {
+      return;
+    }
+
+    final sameAsLast =
+        _lastPersistedSuccessStatus?.code == syncStatus.code &&
+        _lastPersistedSuccessStatus?.lastMessage == messageKey &&
+        _lastPersistedSuccessStatus?.lastSuccessAt == syncStatus.lastSuccessAt;
+    if (sameAsLast) {
+      return;
+    }
+
+    if (_persistingSyncMetadata) {
+      _pendingPersistSyncMetadata = true;
+      return;
+    }
+
+    _persistingSyncMetadata = true;
+    try {
+      do {
+        _pendingPersistSyncMetadata = false;
+        final latestSettings = await _settingsRepository.getSettings();
+        await _settingsRepository.saveSettings(
+          latestSettings.copyWith(
+            lastSyncAt: syncStatus.lastSuccessAt,
+            lastSyncStatusKey: messageKey ?? syncStatus.code.name,
+          ),
+        );
+        _lastPersistedSuccessStatus = syncStatus;
+      } while (_pendingPersistSyncMetadata);
+    } finally {
+      _persistingSyncMetadata = false;
+    }
+  }
+
   @override
   void dispose() {
     unawaited(_syncRepository.stopLiveSync());
+    _settingsSub.cancel();
     _authSub.cancel();
     _syncSub.cancel();
     super.dispose();

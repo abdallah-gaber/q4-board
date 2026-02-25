@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:q4_board/core/firebase/firebase_bootstrap.dart';
+import 'package:q4_board/domain/entities/app_settings_entity.dart';
 import 'package:q4_board/domain/repositories/sync_repository.dart';
+import 'package:q4_board/domain/repositories/settings_repository.dart';
 import 'package:q4_board/domain/services/auth_service.dart';
 import 'package:q4_board/features/settings/controllers/sync_controller.dart';
 
@@ -12,6 +14,7 @@ void main() {
       final controller = SyncController(
         authService: _FakeAuthService(),
         syncRepository: _NeverCompletesSyncRepository(),
+        settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
           isAvailable: true,
           isConfigured: true,
@@ -35,6 +38,7 @@ void main() {
       final controller = SyncController(
         authService: _FakeAuthService(),
         syncRepository: repo,
+        settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
           isAvailable: true,
           isConfigured: true,
@@ -58,6 +62,7 @@ void main() {
       final controller = SyncController(
         authService: auth,
         syncRepository: repo,
+        settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
           isAvailable: true,
           isConfigured: true,
@@ -84,6 +89,7 @@ void main() {
       final controller = SyncController(
         authService: _FakeAuthService(),
         syncRepository: repo,
+        settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
           isAvailable: true,
           isConfigured: true,
@@ -97,6 +103,31 @@ void main() {
       expect(repo.pullCalls, 1);
     });
   });
+}
+
+class _FakeSettingsRepository implements SettingsRepository {
+  _FakeSettingsRepository({AppSettingsEntity? initial})
+    : _settings = initial ?? AppSettingsEntity.defaults();
+
+  AppSettingsEntity _settings;
+  final _controller = StreamController<AppSettingsEntity>.broadcast();
+
+  @override
+  Future<AppSettingsEntity> getSettings() async => _settings;
+
+  @override
+  Future<void> saveSettings(AppSettingsEntity settings) async {
+    _settings = settings;
+    _controller.add(settings);
+  }
+
+  @override
+  Stream<AppSettingsEntity> watchSettings() =>
+      Stream<AppSettingsEntity>.multi((multi) {
+        multi.add(_settings);
+        final sub = _controller.stream.listen(multi.add);
+        multi.onCancel = sub.cancel;
+      });
 }
 
 class _FakeAuthService implements AuthService {

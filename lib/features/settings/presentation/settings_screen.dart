@@ -9,6 +9,7 @@ import 'package:q4_board/l10n/app_localizations.dart';
 import '../../../core/design/app_radii.dart';
 import '../../../core/design/app_spacing.dart';
 import '../../../core/providers/app_providers.dart';
+import '../../../domain/entities/app_settings_entity.dart';
 import '../../../domain/enums/app_language_mode.dart';
 import '../../../domain/enums/theme_preference.dart';
 import '../../../domain/repositories/sync_repository.dart';
@@ -92,12 +93,17 @@ class SettingsScreen extends ConsumerWidget {
           _SectionCard(
             title: l10n.syncSectionTitle,
             child: _SyncSection(
+              appSettings: settings,
               state: syncState,
               onSignIn: () => _onSyncSignIn(context, syncController),
               onSignOut: () => _onSyncSignOut(context, syncController),
               onPush: () => _onSyncPush(context, syncController),
               onPull: () => _onSyncPull(context, syncController),
               onRetry: () => _onSyncRetry(context, syncController),
+              onCloudSyncEnabledChanged: controller.setCloudSyncEnabled,
+              onLiveSyncEnabledChanged: controller.setLiveSyncEnabled,
+              onAutoSyncOnResumeEnabledChanged:
+                  controller.setAutoSyncOnResumeEnabled,
             ),
           ),
           if (kDebugMode) ...[
@@ -374,26 +380,38 @@ class SettingsScreen extends ConsumerWidget {
 
 class _SyncSection extends StatelessWidget {
   const _SyncSection({
+    required this.appSettings,
     required this.state,
     required this.onSignIn,
     required this.onSignOut,
     required this.onPush,
     required this.onPull,
     required this.onRetry,
+    required this.onCloudSyncEnabledChanged,
+    required this.onLiveSyncEnabledChanged,
+    required this.onAutoSyncOnResumeEnabledChanged,
   });
 
+  final AppSettingsEntity appSettings;
   final SyncControllerState state;
   final VoidCallback onSignIn;
   final VoidCallback onSignOut;
   final VoidCallback onPush;
   final VoidCallback onPull;
   final VoidCallback onRetry;
+  final ValueChanged<bool> onCloudSyncEnabledChanged;
+  final ValueChanged<bool> onLiveSyncEnabledChanged;
+  final ValueChanged<bool> onAutoSyncOnResumeEnabledChanged;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final canUseCloud = state.bootstrapState.isAvailable;
     final isSignedIn = state.session.isAuthenticated;
+    final cloudSyncEnabled = appSettings.cloudSyncEnabled;
+    final liveSyncEnabled = appSettings.liveSyncEnabled;
+    final autoSyncOnResumeEnabled = appSettings.autoSyncOnResumeEnabled;
+    final actionsEnabled = canUseCloud && cloudSyncEnabled;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -410,12 +428,42 @@ class _SyncSection extends StatelessWidget {
             Expanded(
               child: Text(
                 canUseCloud
-                    ? (isSignedIn ? l10n.syncConnected : l10n.syncNotSignedIn)
+                    ? (cloudSyncEnabled
+                          ? (isSignedIn
+                                ? l10n.syncConnected
+                                : l10n.syncNotSignedIn)
+                          : l10n.syncDisabledByPreference)
                     : l10n.syncUnavailable,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          value: cloudSyncEnabled,
+          onChanged: canUseCloud ? onCloudSyncEnabledChanged : null,
+          title: Text(l10n.syncEnableCloud),
+          subtitle: Text(l10n.syncEnableCloudDesc),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          value: liveSyncEnabled,
+          onChanged: (actionsEnabled && !state.isBusy)
+              ? onLiveSyncEnabledChanged
+              : null,
+          title: Text(l10n.syncEnableLive),
+          subtitle: Text(l10n.syncEnableLiveDesc),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          value: autoSyncOnResumeEnabled,
+          onChanged: (actionsEnabled && !state.isBusy)
+              ? onAutoSyncOnResumeEnabledChanged
+              : null,
+          title: Text(l10n.syncEnableAutoResume),
+          subtitle: Text(l10n.syncEnableAutoResumeDesc),
         ),
         if (state.session.userId != null) ...[
           const SizedBox(height: AppSpacing.xs),
@@ -424,6 +472,13 @@ class _SyncSection extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+          ),
+        ],
+        if (appSettings.lastSyncAt != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            _lastSyncText(context, appSettings),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
         if (!canUseCloud) ...[
@@ -439,28 +494,28 @@ class _SyncSection extends StatelessWidget {
           runSpacing: AppSpacing.sm,
           children: [
             FilledButton.tonalIcon(
-              onPressed: (!canUseCloud || state.isBusy || isSignedIn)
+              onPressed: (!actionsEnabled || state.isBusy || isSignedIn)
                   ? null
                   : onSignIn,
               icon: const Icon(Icons.login_outlined),
               label: Text(l10n.syncSignIn),
             ),
             FilledButton.tonalIcon(
-              onPressed: (!canUseCloud || state.isBusy || !isSignedIn)
+              onPressed: (!actionsEnabled || state.isBusy || !isSignedIn)
                   ? null
                   : onSignOut,
               icon: const Icon(Icons.logout_outlined),
               label: Text(l10n.syncSignOut),
             ),
             FilledButton.tonalIcon(
-              onPressed: (!canUseCloud || state.isBusy || !isSignedIn)
+              onPressed: (!actionsEnabled || state.isBusy || !isSignedIn)
                   ? null
                   : onPush,
               icon: const Icon(Icons.cloud_upload_outlined),
               label: Text(l10n.syncPush),
             ),
             FilledButton.tonalIcon(
-              onPressed: (!canUseCloud || state.isBusy || !isSignedIn)
+              onPressed: (!actionsEnabled || state.isBusy || !isSignedIn)
                   ? null
                   : onPull,
               icon: const Icon(Icons.cloud_download_outlined),
@@ -468,7 +523,7 @@ class _SyncSection extends StatelessWidget {
             ),
             OutlinedButton.icon(
               onPressed:
-                  (!canUseCloud || state.isBusy || !state.canRetryLastAction)
+                  (!actionsEnabled || state.isBusy || !state.canRetryLastAction)
                   ? null
                   : onRetry,
               icon: const Icon(Icons.refresh_rounded),
@@ -600,6 +655,46 @@ class _SyncSection extends StatelessWidget {
       return l10n.syncErrorNetworkHelp;
     }
     return l10n.syncErrorRetryHint;
+  }
+
+  String _lastSyncText(BuildContext context, AppSettingsEntity settings) {
+    final l10n = AppLocalizations.of(context)!;
+    final at = settings.lastSyncAt;
+    if (at == null) {
+      return l10n.syncLastSyncNever;
+    }
+    final localizations = MaterialLocalizations.of(context);
+    final date = localizations.formatShortDate(at);
+    final time = localizations.formatTimeOfDay(TimeOfDay.fromDateTime(at));
+    final summary = _lastSyncStatusSummary(l10n, settings.lastSyncStatusKey);
+    return l10n.syncLastSyncSummary(date, time, summary);
+  }
+
+  String _lastSyncStatusSummary(AppLocalizations l10n, String? key) {
+    switch (key) {
+      case 'push_complete':
+        return l10n.syncStatusPushComplete;
+      case 'push_conflicts_skipped':
+        return l10n.syncStatusPushCompleteConflicts;
+      case 'pull_complete':
+        return l10n.syncStatusPullComplete;
+      case 'pull_conflicts_skipped':
+        return l10n.syncStatusPullCompleteConflicts;
+      case 'pull_remote_empty_local_kept':
+        return l10n.syncStatusPullRemoteEmptyLocalKept;
+      case 'live_sync_active':
+        return l10n.syncStatusLiveActive;
+      case 'live_sync_applied':
+        return l10n.syncStatusLiveApplied;
+      case 'live_sync_applied_conflicts':
+        return l10n.syncStatusLiveAppliedConflicts;
+      case 'live_sync_remote_empty_local_kept':
+        return l10n.syncStatusPullRemoteEmptyLocalKept;
+      case 'live_sync_stopped':
+        return l10n.syncStatusLiveStopped;
+      default:
+        return l10n.syncStatusIdle;
+    }
   }
 }
 

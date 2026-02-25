@@ -308,11 +308,53 @@ abstract class AppLocalizations {
   /// **'Sign in to enable cloud sync'**
   String get syncNotSignedIn;
 
+  /// No description provided for @syncDisabledByPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync is disabled on this device'**
+  String get syncDisabledByPreference;
+
   /// No description provided for @syncNotConfiguredHelp.
   ///
   /// In en, this message translates to:
   /// **'Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.'**
   String get syncNotConfiguredHelp;
+
+  /// No description provided for @syncEnableCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable cloud sync'**
+  String get syncEnableCloud;
+
+  /// No description provided for @syncEnableCloudDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow sign-in and cloud sync on this device.'**
+  String get syncEnableCloudDesc;
+
+  /// No description provided for @syncEnableLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable live sync'**
+  String get syncEnableLive;
+
+  /// No description provided for @syncEnableLiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply remote changes automatically while signed in.'**
+  String get syncEnableLiveDesc;
+
+  /// No description provided for @syncEnableAutoResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto sync on app resume'**
+  String get syncEnableAutoResume;
+
+  /// No description provided for @syncEnableAutoResumeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically pull cloud changes when the app returns to foreground.'**
+  String get syncEnableAutoResumeDesc;
 
   /// No description provided for @syncSignIn.
   ///
@@ -493,6 +535,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Live sync applied (newer local changes were kept)'**
   String get syncStatusLiveAppliedConflicts;
+
+  /// No description provided for @syncLastSyncNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: never'**
+  String get syncLastSyncNever;
+
+  /// No description provided for @syncLastSyncSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {date} {time} ({summary})'**
+  String syncLastSyncSummary(String date, String time, String summary);
 
   /// No description provided for @syncStatusSuccess.
   ///

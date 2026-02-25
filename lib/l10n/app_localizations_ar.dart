@@ -115,8 +115,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncNotSignedIn => 'سجّل الدخول لتفعيل المزامنة السحابية';
 
   @override
+  String get syncDisabledByPreference =>
+      'المزامنة السحابية معطلة على هذا الجهاز';
+
+  @override
   String get syncNotConfiguredHelp =>
       'لم يتم إعداد Firebase بعد. شغّل FlutterFire configure واستبدل ملف firebase_options.dart.';
+
+  @override
+  String get syncEnableCloud => 'تفعيل المزامنة السحابية';
+
+  @override
+  String get syncEnableCloudDesc =>
+      'السماح بتسجيل الدخول والمزامنة السحابية على هذا الجهاز.';
+
+  @override
+  String get syncEnableLive => 'تفعيل المزامنة الحية';
+
+  @override
+  String get syncEnableLiveDesc =>
+      'تطبيق التغييرات السحابية تلقائيًا أثناء تسجيل الدخول.';
+
+  @override
+  String get syncEnableAutoResume => 'مزامنة تلقائية عند العودة للتطبيق';
+
+  @override
+  String get syncEnableAutoResumeDesc =>
+      'سحب التغييرات السحابية تلقائيًا عند عودة التطبيق للواجهة.';
 
   @override
   String get syncSignIn => 'تسجيل الدخول';
@@ -219,6 +244,14 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get syncStatusLiveAppliedConflicts =>
       'تم تطبيق المزامنة الحية (مع الاحتفاظ بالتعديلات المحلية الأحدث)';
+
+  @override
+  String get syncLastSyncNever => 'آخر مزامنة: لم تتم بعد';
+
+  @override
+  String syncLastSyncSummary(String date, String time, String summary) {
+    return 'آخر مزامنة: $date $time ($summary)';
+  }
 
   @override
   String get syncStatusSuccess => 'اكتملت المزامنة';

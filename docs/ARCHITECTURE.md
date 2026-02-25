@@ -27,6 +27,7 @@ Q4 Board uses a feature-first structure with clear domain/data boundaries.
 - Firestore sync supports manual (`Push` / `Pull`) actions from Settings.
 - A Firestore snapshot listener can apply remote changes to local storage after sign-in (live remote-to-local sync).
 - App resume triggers a throttled auto-pull to reduce stale local state after backgrounding.
+- Sync behavior preferences and sync metadata (last sync time/result) are persisted in the app settings store.
 - Merge behavior uses last-write-wins by `updatedAt` with a safety guard that avoids wiping local notes when remote is empty.
 
 ## Testing Strategy

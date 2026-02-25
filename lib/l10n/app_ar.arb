@@ -35,7 +35,14 @@
   "syncUnavailable": "المزامنة السحابية غير متاحة",
   "syncConnected": "المزامنة السحابية جاهزة",
   "syncNotSignedIn": "سجّل الدخول لتفعيل المزامنة السحابية",
+  "syncDisabledByPreference": "المزامنة السحابية معطلة على هذا الجهاز",
   "syncNotConfiguredHelp": "لم يتم إعداد Firebase بعد. شغّل FlutterFire configure واستبدل ملف firebase_options.dart.",
+  "syncEnableCloud": "تفعيل المزامنة السحابية",
+  "syncEnableCloudDesc": "السماح بتسجيل الدخول والمزامنة السحابية على هذا الجهاز.",
+  "syncEnableLive": "تفعيل المزامنة الحية",
+  "syncEnableLiveDesc": "تطبيق التغييرات السحابية تلقائيًا أثناء تسجيل الدخول.",
+  "syncEnableAutoResume": "مزامنة تلقائية عند العودة للتطبيق",
+  "syncEnableAutoResumeDesc": "سحب التغييرات السحابية تلقائيًا عند عودة التطبيق للواجهة.",
   "syncSignIn": "تسجيل الدخول",
   "syncSignOut": "تسجيل الخروج",
   "syncPush": "رفع",
@@ -66,6 +73,21 @@
   "syncStatusLiveStopped": "تم إيقاف المزامنة الحية",
   "syncStatusLiveApplied": "تم تطبيق التغييرات السحابية تلقائيًا",
   "syncStatusLiveAppliedConflicts": "تم تطبيق المزامنة الحية (مع الاحتفاظ بالتعديلات المحلية الأحدث)",
+  "syncLastSyncNever": "آخر مزامنة: لم تتم بعد",
+  "syncLastSyncSummary": "آخر مزامنة: {date} {time} ({summary})",
+  "@syncLastSyncSummary": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
   "syncStatusSuccess": "اكتملت المزامنة",
   "syncStatusError": "فشلت المزامنة",
   "syncStatusPushComplete": "اكتمل الرفع",

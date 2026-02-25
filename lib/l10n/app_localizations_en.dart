@@ -115,8 +115,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncNotSignedIn => 'Sign in to enable cloud sync';
 
   @override
+  String get syncDisabledByPreference =>
+      'Cloud sync is disabled on this device';
+
+  @override
   String get syncNotConfiguredHelp =>
       'Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.';
+
+  @override
+  String get syncEnableCloud => 'Enable cloud sync';
+
+  @override
+  String get syncEnableCloudDesc =>
+      'Allow sign-in and cloud sync on this device.';
+
+  @override
+  String get syncEnableLive => 'Enable live sync';
+
+  @override
+  String get syncEnableLiveDesc =>
+      'Apply remote changes automatically while signed in.';
+
+  @override
+  String get syncEnableAutoResume => 'Auto sync on app resume';
+
+  @override
+  String get syncEnableAutoResumeDesc =>
+      'Automatically pull cloud changes when the app returns to foreground.';
 
   @override
   String get syncSignIn => 'Sign in';
@@ -219,6 +244,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get syncStatusLiveAppliedConflicts =>
       'Live sync applied (newer local changes were kept)';
+
+  @override
+  String get syncLastSyncNever => 'Last sync: never';
+
+  @override
+  String syncLastSyncSummary(String date, String time, String summary) {
+    return 'Last sync: $date $time ($summary)';
+  }
 
   @override
   String get syncStatusSuccess => 'Sync completed';

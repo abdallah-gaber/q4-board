@@ -35,7 +35,14 @@
   "syncUnavailable": "Cloud sync unavailable",
   "syncConnected": "Cloud sync ready",
   "syncNotSignedIn": "Sign in to enable cloud sync",
+  "syncDisabledByPreference": "Cloud sync is disabled on this device",
   "syncNotConfiguredHelp": "Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.",
+  "syncEnableCloud": "Enable cloud sync",
+  "syncEnableCloudDesc": "Allow sign-in and cloud sync on this device.",
+  "syncEnableLive": "Enable live sync",
+  "syncEnableLiveDesc": "Apply remote changes automatically while signed in.",
+  "syncEnableAutoResume": "Auto sync on app resume",
+  "syncEnableAutoResumeDesc": "Automatically pull cloud changes when the app returns to foreground.",
   "syncSignIn": "Sign in",
   "syncSignOut": "Sign out",
   "syncPush": "Push",
@@ -66,6 +73,21 @@
   "syncStatusLiveStopped": "Live sync stopped",
   "syncStatusLiveApplied": "Live sync applied remote changes",
   "syncStatusLiveAppliedConflicts": "Live sync applied (newer local changes were kept)",
+  "syncLastSyncNever": "Last sync: never",
+  "syncLastSyncSummary": "Last sync: {date} {time} ({summary})",
+  "@syncLastSyncSummary": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
   "syncStatusSuccess": "Sync completed",
   "syncStatusError": "Sync failed",
   "syncStatusPushComplete": "Push completed",

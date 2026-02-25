@@ -55,3 +55,4 @@ If macOS integration tests fail with a codesign "resource fork / Finder informat
 - Include screenshots for visible UI changes.
 - Confirm `flutter analyze` and `flutter test` pass locally.
 - Prefer adding/maintaining integration smoke tests for critical user flows.
+- For sync changes, cover timeout/retry and preference-driven behavior in controller tests.

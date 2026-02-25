@@ -28,6 +28,8 @@ It helps you classify tasks into 4 quadrants and prioritize execution with a sti
 - Firestore cloud sync with manual actions (Push / Pull)
 - Live sync listener after sign-in (remote changes pulled automatically)
 - Auto-pull on app resume with throttling
+- Persisted sync preferences (cloud on/off, live sync, resume auto-sync)
+- Persisted last-sync summary in Settings
 - Local-only fallback when Firebase is not configured yet
 
 ## Tech Stack

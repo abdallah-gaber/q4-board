@@ -573,6 +573,24 @@ class _SyncSection extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          l10n.syncRecentActivity,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        if (state.recentActivities.isEmpty)
+          Text(
+            l10n.syncNoRecentActivity,
+            style: Theme.of(context).textTheme.bodySmall,
+          )
+        else
+          Column(
+            children: state.recentActivities
+                .take(6)
+                .map((entry) => _buildActivityTile(context, entry))
+                .toList(growable: false),
+          ),
       ],
     );
   }
@@ -695,6 +713,165 @@ class _SyncSection extends StatelessWidget {
       default:
         return l10n.syncStatusIdle;
     }
+  }
+
+  Widget _buildActivityTile(BuildContext context, SyncActivityEntry entry) {
+    final l10n = AppLocalizations.of(context)!;
+    final localizations = MaterialLocalizations.of(context);
+    final atText =
+        '${localizations.formatShortDate(entry.at)} ${localizations.formatTimeOfDay(TimeOfDay.fromDateTime(entry.at))}';
+    final title = _activityTitle(l10n, entry);
+    final subtitle = _activitySubtitle(l10n, entry);
+    final conflictHint = _activityConflictHint(l10n, entry);
+
+    return Container(
+      margin: const EdgeInsets.only(top: AppSpacing.xs),
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(AppRadii.sm),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                entry.isSuccess
+                    ? Icons.check_circle_outline
+                    : Icons.error_outline,
+                size: 16,
+                color: entry.isSuccess
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.error,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              Text(atText, style: Theme.of(context).textTheme.labelSmall),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+          if (conflictHint != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              conflictHint,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ],
+          if (entry.conflictNoteIds.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton.icon(
+                onPressed: () => _showConflictDetails(context, entry),
+                icon: const Icon(Icons.rule_folder_outlined, size: 18),
+                label: Text(l10n.syncConflictDetailsAction),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _activityTitle(AppLocalizations l10n, SyncActivityEntry entry) {
+    final prefix = switch (entry.kind) {
+      SyncActivityKind.push => l10n.syncActivityPush,
+      SyncActivityKind.pull => l10n.syncActivityPull,
+      SyncActivityKind.autoPull => l10n.syncActivityAutoPull,
+      SyncActivityKind.live => l10n.syncActivityLive,
+    };
+    if (!entry.isSuccess) {
+      return l10n.syncActivityFailed(prefix);
+    }
+    return prefix;
+  }
+
+  String _activitySubtitle(AppLocalizations l10n, SyncActivityEntry entry) {
+    if (!entry.isSuccess) {
+      return l10n.syncActivityErrorCode(
+        entry.errorCode ?? l10n.syncErrorGeneric,
+      );
+    }
+    final summary = _lastSyncStatusSummary(l10n, entry.summaryKey);
+    return l10n.syncActivityCounts(
+      summary,
+      entry.upserts,
+      entry.deletes,
+      entry.skippedConflicts,
+    );
+  }
+
+  String? _activityConflictHint(
+    AppLocalizations l10n,
+    SyncActivityEntry entry,
+  ) {
+    if (!entry.isSuccess || entry.skippedConflicts <= 0) {
+      return null;
+    }
+    return switch (entry.conflictResolution) {
+      SyncConflictResolution.localKept => l10n.syncConflictLocalKeptHint,
+      SyncConflictResolution.remoteKept => l10n.syncConflictRemoteKeptHint,
+      null => l10n.syncConflictReviewHint,
+    };
+  }
+
+  Future<void> _showConflictDetails(
+    BuildContext context,
+    SyncActivityEntry entry,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.syncConflictDetailsTitle,
+                  style: Theme.of(sheetContext).textTheme.titleMedium,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  _activityConflictHint(l10n, entry) ??
+                      l10n.syncConflictReviewHint,
+                  style: Theme.of(sheetContext).textTheme.bodySmall,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 220),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: entry.conflictNoteIds.length,
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: AppSpacing.sm),
+                    itemBuilder: (_, index) => SelectableText(
+                      entry.conflictNoteIds[index],
+                      style: Theme.of(sheetContext).textTheme.bodySmall,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

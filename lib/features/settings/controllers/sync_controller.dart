@@ -26,6 +26,7 @@ class SyncControllerState {
     required this.syncStatus,
     required this.isBusy,
     required this.lastAction,
+    required this.recentActivities,
     this.lastError,
   });
 
@@ -34,6 +35,7 @@ class SyncControllerState {
   final SyncStatusSnapshot syncStatus;
   final bool isBusy;
   final SyncActionType? lastAction;
+  final List<SyncActivityEntry> recentActivities;
   final SyncActionError? lastError;
 
   factory SyncControllerState.initial(FirebaseBootstrapState bootstrapState) =>
@@ -45,6 +47,7 @@ class SyncControllerState {
             : SyncStatusSnapshot.unavailable,
         isBusy: false,
         lastAction: null,
+        recentActivities: const <SyncActivityEntry>[],
       );
 
   SyncControllerState copyWith({
@@ -54,6 +57,7 @@ class SyncControllerState {
     bool? isBusy,
     SyncActionType? lastAction,
     bool clearLastAction = false,
+    List<SyncActivityEntry>? recentActivities,
     SyncActionError? lastError,
     bool clearLastError = false,
   }) {
@@ -63,6 +67,7 @@ class SyncControllerState {
       syncStatus: syncStatus ?? this.syncStatus,
       isBusy: isBusy ?? this.isBusy,
       lastAction: clearLastAction ? null : (lastAction ?? this.lastAction),
+      recentActivities: recentActivities ?? this.recentActivities,
       lastError: clearLastError ? null : (lastError ?? this.lastError),
     );
   }
@@ -71,6 +76,36 @@ class SyncControllerState {
 }
 
 enum SyncActionType { signIn, signOut, push, pull }
+
+enum SyncConflictResolution { localKept, remoteKept }
+
+enum SyncActivityKind { push, pull, autoPull, live }
+
+class SyncActivityEntry {
+  const SyncActivityEntry({
+    required this.kind,
+    required this.at,
+    required this.isSuccess,
+    required this.summaryKey,
+    required this.upserts,
+    required this.deletes,
+    required this.skippedConflicts,
+    required this.conflictNoteIds,
+    this.conflictResolution,
+    this.errorCode,
+  });
+
+  final SyncActivityKind kind;
+  final DateTime at;
+  final bool isSuccess;
+  final String summaryKey;
+  final int upserts;
+  final int deletes;
+  final int skippedConflicts;
+  final List<String> conflictNoteIds;
+  final SyncConflictResolution? conflictResolution;
+  final String? errorCode;
+}
 
 class SyncActionError {
   const SyncActionError({
@@ -108,6 +143,7 @@ class SyncController extends StateNotifier<SyncControllerState> {
     });
     _syncSub = _syncRepository.watchStatus().listen((syncStatus) {
       state = state.copyWith(syncStatus: syncStatus);
+      _recordLiveActivityIfNeeded(syncStatus);
       unawaited(_persistSyncMetadataIfNeeded(syncStatus));
     });
   }
@@ -133,11 +169,37 @@ class SyncController extends StateNotifier<SyncControllerState> {
   Future<void> signOut() =>
       _runBusy(SyncActionType.signOut, _authService.signOut);
 
-  Future<SyncOperationResult> push() =>
-      _runBusy(SyncActionType.push, _syncRepository.push);
+  Future<SyncOperationResult> push() async {
+    try {
+      final result = await _runBusy(SyncActionType.push, _syncRepository.push);
+      _recordActivityFromResult(
+        kind: SyncActivityKind.push,
+        result: result,
+        summaryKey: 'push_complete',
+        conflictResolution: SyncConflictResolution.remoteKept,
+      );
+      return result;
+    } catch (error) {
+      _recordFailedActivity(kind: SyncActivityKind.push, error: error);
+      rethrow;
+    }
+  }
 
-  Future<SyncOperationResult> pull() =>
-      _runBusy(SyncActionType.pull, _syncRepository.pull);
+  Future<SyncOperationResult> pull() async {
+    try {
+      final result = await _runBusy(SyncActionType.pull, _syncRepository.pull);
+      _recordActivityFromResult(
+        kind: SyncActivityKind.pull,
+        result: result,
+        summaryKey: 'pull_complete',
+        conflictResolution: SyncConflictResolution.localKept,
+      );
+      return result;
+    } catch (error) {
+      _recordFailedActivity(kind: SyncActivityKind.pull, error: error);
+      rethrow;
+    }
+  }
 
   Future<void> retryLastAction() async {
     switch (state.lastAction) {
@@ -171,8 +233,15 @@ class SyncController extends StateNotifier<SyncControllerState> {
     }
     _lastAutoPullAt = now;
     try {
-      await _runBusy(SyncActionType.pull, _syncRepository.pull);
-    } catch (_) {
+      final result = await _runBusy(SyncActionType.pull, _syncRepository.pull);
+      _recordActivityFromResult(
+        kind: SyncActivityKind.autoPull,
+        result: result,
+        summaryKey: 'pull_complete',
+        conflictResolution: SyncConflictResolution.localKept,
+      );
+    } catch (error) {
+      _recordFailedActivity(kind: SyncActivityKind.autoPull, error: error);
       // App-resume auto sync failures are surfaced in controller status/UI.
     }
   }
@@ -323,6 +392,103 @@ class SyncController extends StateNotifier<SyncControllerState> {
     } finally {
       _persistingSyncMetadata = false;
     }
+  }
+
+  void _recordActivityFromResult({
+    required SyncActivityKind kind,
+    required SyncOperationResult result,
+    required String summaryKey,
+    required SyncConflictResolution conflictResolution,
+  }) {
+    final effectiveSummaryKey = result.skippedConflicts > 0
+        ? (kind == SyncActivityKind.push
+              ? 'push_conflicts_skipped'
+              : 'pull_conflicts_skipped')
+        : summaryKey;
+    _prependActivity(
+      SyncActivityEntry(
+        kind: kind,
+        at: DateTime.now(),
+        isSuccess: true,
+        summaryKey: effectiveSummaryKey,
+        upserts: result.upserts,
+        deletes: result.deletes,
+        skippedConflicts: result.skippedConflicts,
+        conflictNoteIds: result.conflictNoteIds,
+        conflictResolution: result.skippedConflicts > 0
+            ? conflictResolution
+            : null,
+      ),
+    );
+  }
+
+  void _recordFailedActivity({
+    required SyncActivityKind kind,
+    required Object error,
+  }) {
+    _prependActivity(
+      SyncActivityEntry(
+        kind: kind,
+        at: DateTime.now(),
+        isSuccess: false,
+        summaryKey: 'sync_error',
+        upserts: 0,
+        deletes: 0,
+        skippedConflicts: 0,
+        conflictNoteIds: const <String>[],
+        errorCode: _errorCode(error),
+      ),
+    );
+  }
+
+  void _recordLiveActivityIfNeeded(SyncStatusSnapshot status) {
+    if (status.code != SyncStatusCode.liveListening) {
+      return;
+    }
+    final key = status.lastMessage;
+    if (key != 'live_sync_applied' && key != 'live_sync_applied_conflicts') {
+      return;
+    }
+    final nonNullKey = key!;
+    final latest = state.recentActivities.isNotEmpty
+        ? state.recentActivities.first
+        : null;
+    if (latest != null &&
+        latest.kind == SyncActivityKind.live &&
+        latest.summaryKey == key &&
+        status.lastSuccessAt != null &&
+        latest.at.difference(status.lastSuccessAt!).inMilliseconds == 0) {
+      return;
+    }
+    _prependActivity(
+      SyncActivityEntry(
+        kind: SyncActivityKind.live,
+        at: status.lastSuccessAt ?? DateTime.now(),
+        isSuccess: true,
+        summaryKey: nonNullKey,
+        upserts: 0,
+        deletes: 0,
+        skippedConflicts: 0,
+        conflictNoteIds: const <String>[],
+        conflictResolution: nonNullKey == 'live_sync_applied_conflicts'
+            ? SyncConflictResolution.localKept
+            : null,
+      ),
+    );
+  }
+
+  void _prependActivity(SyncActivityEntry entry) {
+    final updated = <SyncActivityEntry>[entry, ...state.recentActivities];
+    if (updated.length > 12) {
+      updated.removeRange(12, updated.length);
+    }
+    state = state.copyWith(recentActivities: updated);
+  }
+
+  String? _errorCode(Object error) {
+    final text = error.toString();
+    final match = RegExp(r'\[([a-z_]+/[a-z\-]+)\]').firstMatch(text);
+    return match?.group(1);
   }
 
   @override

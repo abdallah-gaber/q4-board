@@ -144,6 +144,62 @@ class AppLocalizationsEn extends AppLocalizations {
       'Automatically pull cloud changes when the app returns to foreground.';
 
   @override
+  String get syncRecentActivity => 'Recent sync activity';
+
+  @override
+  String get syncNoRecentActivity => 'No sync activity yet';
+
+  @override
+  String get syncActivityPush => 'Manual push';
+
+  @override
+  String get syncActivityPull => 'Manual pull';
+
+  @override
+  String get syncActivityAutoPull => 'Auto pull (resume)';
+
+  @override
+  String get syncActivityLive => 'Live sync apply';
+
+  @override
+  String syncActivityFailed(String action) {
+    return '$action failed';
+  }
+
+  @override
+  String syncActivityErrorCode(String code) {
+    return 'Error: $code';
+  }
+
+  @override
+  String syncActivityCounts(
+    String summary,
+    int upserts,
+    int deletes,
+    int conflicts,
+  ) {
+    return '$summary • upserts: $upserts, deletes: $deletes, conflicts: $conflicts';
+  }
+
+  @override
+  String get syncConflictLocalKeptHint =>
+      'Conflicts resolved by keeping newer local changes.';
+
+  @override
+  String get syncConflictRemoteKeptHint =>
+      'Conflicts resolved by keeping newer cloud changes.';
+
+  @override
+  String get syncConflictReviewHint =>
+      'Review conflict details to inspect affected note IDs.';
+
+  @override
+  String get syncConflictDetailsAction => 'Conflict details';
+
+  @override
+  String get syncConflictDetailsTitle => 'Conflict details (note IDs)';
+
+  @override
   String get syncSignIn => 'Sign in';
 
   @override

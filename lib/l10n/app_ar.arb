@@ -43,6 +43,50 @@
   "syncEnableLiveDesc": "تطبيق التغييرات السحابية تلقائيًا أثناء تسجيل الدخول.",
   "syncEnableAutoResume": "مزامنة تلقائية عند العودة للتطبيق",
   "syncEnableAutoResumeDesc": "سحب التغييرات السحابية تلقائيًا عند عودة التطبيق للواجهة.",
+  "syncRecentActivity": "سجل المزامنة الأخير",
+  "syncNoRecentActivity": "لا توجد عمليات مزامنة بعد",
+  "syncActivityPush": "رفع يدوي",
+  "syncActivityPull": "سحب يدوي",
+  "syncActivityAutoPull": "سحب تلقائي (عند العودة)",
+  "syncActivityLive": "تطبيق مزامنة حية",
+  "syncActivityFailed": "فشل {action}",
+  "@syncActivityFailed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActivityErrorCode": "الخطأ: {code}",
+  "@syncActivityErrorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActivityCounts": "{summary} • تحديثات: {upserts}، حذف: {deletes}، تعارضات: {conflicts}",
+  "@syncActivityCounts": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      },
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  },
+  "syncConflictLocalKeptHint": "تم حل التعارضات بالاحتفاظ بالتعديلات المحلية الأحدث.",
+  "syncConflictRemoteKeptHint": "تم حل التعارضات بالاحتفاظ بالتعديلات السحابية الأحدث.",
+  "syncConflictReviewHint": "راجع تفاصيل التعارض لمعرفة معرّفات الملاحظات المتأثرة.",
+  "syncConflictDetailsAction": "تفاصيل التعارض",
+  "syncConflictDetailsTitle": "تفاصيل التعارض (معرّفات الملاحظات)",
   "syncSignIn": "تسجيل الدخول",
   "syncSignOut": "تسجيل الخروج",
   "syncPush": "رفع",

@@ -80,6 +80,7 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
         deletes: plan.deletes.length,
         skippedConflicts: plan.skippedConflicts,
         didMutate: plan.upserts.isNotEmpty || plan.deletes.isNotEmpty,
+        conflictNoteIds: plan.skippedConflictNoteIds,
       );
     } catch (error) {
       _emit(
@@ -361,6 +362,7 @@ class FirestoreSyncRepositoryImpl implements SyncRepository {
       deletes: plan.deletes.length,
       skippedConflicts: plan.skippedConflicts,
       didMutate: plan.upserts.isNotEmpty || plan.deletes.isNotEmpty,
+      conflictNoteIds: plan.skippedConflictNoteIds,
     );
   }
 

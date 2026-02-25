@@ -144,6 +144,62 @@ class AppLocalizationsAr extends AppLocalizations {
       'سحب التغييرات السحابية تلقائيًا عند عودة التطبيق للواجهة.';
 
   @override
+  String get syncRecentActivity => 'سجل المزامنة الأخير';
+
+  @override
+  String get syncNoRecentActivity => 'لا توجد عمليات مزامنة بعد';
+
+  @override
+  String get syncActivityPush => 'رفع يدوي';
+
+  @override
+  String get syncActivityPull => 'سحب يدوي';
+
+  @override
+  String get syncActivityAutoPull => 'سحب تلقائي (عند العودة)';
+
+  @override
+  String get syncActivityLive => 'تطبيق مزامنة حية';
+
+  @override
+  String syncActivityFailed(String action) {
+    return 'فشل $action';
+  }
+
+  @override
+  String syncActivityErrorCode(String code) {
+    return 'الخطأ: $code';
+  }
+
+  @override
+  String syncActivityCounts(
+    String summary,
+    int upserts,
+    int deletes,
+    int conflicts,
+  ) {
+    return '$summary • تحديثات: $upserts، حذف: $deletes، تعارضات: $conflicts';
+  }
+
+  @override
+  String get syncConflictLocalKeptHint =>
+      'تم حل التعارضات بالاحتفاظ بالتعديلات المحلية الأحدث.';
+
+  @override
+  String get syncConflictRemoteKeptHint =>
+      'تم حل التعارضات بالاحتفاظ بالتعديلات السحابية الأحدث.';
+
+  @override
+  String get syncConflictReviewHint =>
+      'راجع تفاصيل التعارض لمعرفة معرّفات الملاحظات المتأثرة.';
+
+  @override
+  String get syncConflictDetailsAction => 'تفاصيل التعارض';
+
+  @override
+  String get syncConflictDetailsTitle => 'تفاصيل التعارض (معرّفات الملاحظات)';
+
+  @override
   String get syncSignIn => 'تسجيل الدخول';
 
   @override

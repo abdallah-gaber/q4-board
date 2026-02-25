@@ -5,12 +5,14 @@ class SyncMergePlan {
     required this.upserts,
     required this.deletes,
     required this.skippedConflicts,
+    required this.skippedConflictNoteIds,
     this.skippedEmptyRemoteDelete = false,
   });
 
   final List<NoteEntity> upserts;
   final List<String> deletes;
   final int skippedConflicts;
+  final List<String> skippedConflictNoteIds;
   final bool skippedEmptyRemoteDelete;
 }
 
@@ -23,6 +25,7 @@ class NoteSyncMergePlanner {
   }) {
     final upserts = <NoteEntity>[];
     var skippedConflicts = 0;
+    final skippedConflictNoteIds = <String>[];
 
     final localIds = <String>{};
     for (final local in localNotes) {
@@ -32,6 +35,7 @@ class NoteSyncMergePlanner {
         upserts.add(local);
       } else {
         skippedConflicts += 1;
+        skippedConflictNoteIds.add(local.id);
       }
     }
 
@@ -43,6 +47,7 @@ class NoteSyncMergePlanner {
       upserts: upserts,
       deletes: deletes,
       skippedConflicts: skippedConflicts,
+      skippedConflictNoteIds: skippedConflictNoteIds,
     );
   }
 
@@ -53,6 +58,7 @@ class NoteSyncMergePlanner {
     final localById = {for (final note in localNotes) note.id: note};
     final upserts = <NoteEntity>[];
     var skippedConflicts = 0;
+    final skippedConflictNoteIds = <String>[];
 
     for (final remote in remoteNotes.values) {
       final local = localById[remote.id];
@@ -60,6 +66,7 @@ class NoteSyncMergePlanner {
         upserts.add(remote);
       } else {
         skippedConflicts += 1;
+        skippedConflictNoteIds.add(remote.id);
       }
     }
 
@@ -73,6 +80,7 @@ class NoteSyncMergePlanner {
         upserts: upserts,
         deletes: const <String>[],
         skippedConflicts: skippedConflicts,
+        skippedConflictNoteIds: skippedConflictNoteIds,
         skippedEmptyRemoteDelete: true,
       );
     }
@@ -85,6 +93,7 @@ class NoteSyncMergePlanner {
       upserts: upserts,
       deletes: deletes,
       skippedConflicts: skippedConflicts,
+      skippedConflictNoteIds: skippedConflictNoteIds,
     );
   }
 }

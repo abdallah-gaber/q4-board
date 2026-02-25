@@ -356,6 +356,95 @@ abstract class AppLocalizations {
   /// **'Automatically pull cloud changes when the app returns to foreground.'**
   String get syncEnableAutoResumeDesc;
 
+  /// No description provided for @syncRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent sync activity'**
+  String get syncRecentActivity;
+
+  /// No description provided for @syncNoRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No sync activity yet'**
+  String get syncNoRecentActivity;
+
+  /// No description provided for @syncActivityPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual push'**
+  String get syncActivityPush;
+
+  /// No description provided for @syncActivityPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual pull'**
+  String get syncActivityPull;
+
+  /// No description provided for @syncActivityAutoPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto pull (resume)'**
+  String get syncActivityAutoPull;
+
+  /// No description provided for @syncActivityLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync apply'**
+  String get syncActivityLive;
+
+  /// No description provided for @syncActivityFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} failed'**
+  String syncActivityFailed(String action);
+
+  /// No description provided for @syncActivityErrorCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {code}'**
+  String syncActivityErrorCode(String code);
+
+  /// No description provided for @syncActivityCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'{summary} • upserts: {upserts}, deletes: {deletes}, conflicts: {conflicts}'**
+  String syncActivityCounts(
+    String summary,
+    int upserts,
+    int deletes,
+    int conflicts,
+  );
+
+  /// No description provided for @syncConflictLocalKeptHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts resolved by keeping newer local changes.'**
+  String get syncConflictLocalKeptHint;
+
+  /// No description provided for @syncConflictRemoteKeptHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts resolved by keeping newer cloud changes.'**
+  String get syncConflictRemoteKeptHint;
+
+  /// No description provided for @syncConflictReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Review conflict details to inspect affected note IDs.'**
+  String get syncConflictReviewHint;
+
+  /// No description provided for @syncConflictDetailsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict details'**
+  String get syncConflictDetailsAction;
+
+  /// No description provided for @syncConflictDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict details (note IDs)'**
+  String get syncConflictDetailsTitle;
+
   /// No description provided for @syncSignIn.
   ///
   /// In en, this message translates to:

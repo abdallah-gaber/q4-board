@@ -43,6 +43,50 @@
   "syncEnableLiveDesc": "Apply remote changes automatically while signed in.",
   "syncEnableAutoResume": "Auto sync on app resume",
   "syncEnableAutoResumeDesc": "Automatically pull cloud changes when the app returns to foreground.",
+  "syncRecentActivity": "Recent sync activity",
+  "syncNoRecentActivity": "No sync activity yet",
+  "syncActivityPush": "Manual push",
+  "syncActivityPull": "Manual pull",
+  "syncActivityAutoPull": "Auto pull (resume)",
+  "syncActivityLive": "Live sync apply",
+  "syncActivityFailed": "{action} failed",
+  "@syncActivityFailed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActivityErrorCode": "Error: {code}",
+  "@syncActivityErrorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActivityCounts": "{summary} • upserts: {upserts}, deletes: {deletes}, conflicts: {conflicts}",
+  "@syncActivityCounts": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      },
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  },
+  "syncConflictLocalKeptHint": "Conflicts resolved by keeping newer local changes.",
+  "syncConflictRemoteKeptHint": "Conflicts resolved by keeping newer cloud changes.",
+  "syncConflictReviewHint": "Review conflict details to inspect affected note IDs.",
+  "syncConflictDetailsAction": "Conflict details",
+  "syncConflictDetailsTitle": "Conflict details (note IDs)",
   "syncSignIn": "Sign in",
   "syncSignOut": "Sign out",
   "syncPush": "Push",

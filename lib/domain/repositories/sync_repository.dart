@@ -45,12 +45,14 @@ class SyncOperationResult {
     required this.deletes,
     required this.skippedConflicts,
     required this.didMutate,
+    this.conflictNoteIds = const <String>[],
   });
 
   final int upserts;
   final int deletes;
   final int skippedConflicts;
   final bool didMutate;
+  final List<String> conflictNoteIds;
 }
 
 abstract interface class SyncRepository {

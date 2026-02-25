@@ -9,11 +9,16 @@
 - Theme switching
 - Ongoing UI polish (icons, splash, docs, test hardening)
 
-## Phase 2 (Planned)
+## Phase 2 (In Progress)
 
-- Auth integration
-- Cloud sync across devices
-- Conflict handling basics
+- Firebase anonymous auth integration
+- Firestore-backed manual sync (Push / Pull)
+- Live remote-to-local sync listener and app-resume auto-pull
+- Conflict handling basics (last-write-wins with safety checks)
+- Selective sync controls and persisted sync status metadata
+- Conflict activity history + per-note conflict details in Settings
+- Optional auto-push for local changes (debounced; default off)
+- Next: emulator-backed sync CI/test automation and conflict resolution UX (beyond last-write-wins visibility)
 
 ## Phase 3+ (Candidate)
 

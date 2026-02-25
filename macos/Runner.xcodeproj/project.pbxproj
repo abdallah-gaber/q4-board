@@ -29,6 +29,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		3732D5546D6A5B7AA79C2211 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D253679C96EA1B569334546 /* Pods_RunnerTests.framework */; };
 		7624ABF4E2E88ED31341CA46 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C7107AD866BC2FBE3B2C1B /* Pods_Runner.framework */; };
+		A45526F0B8AE510AEE2BD7D0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06C24E4188256F2A670F9EE1 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		06C24E4188256F2A670F9EE1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 				33CC10EE2044A3C60003C045 /* Products */,
 				D73912EC22F37F3D000D13A0 /* Frameworks */,
 				7277142602AF0784CD5FA6E0 /* Pods */,
+				06C24E4188256F2A670F9EE1 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -317,6 +320,7 @@
 			files = (
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
+				A45526F0B8AE510AEE2BD7D0 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

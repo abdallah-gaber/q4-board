@@ -103,6 +103,262 @@ class AppLocalizationsAr extends AppLocalizations {
       'تسجيل الدخول والمزامنة السحابية عبر Firebase ستضاف في المرحلة الثانية.';
 
   @override
+  String get syncSectionTitle => 'المزامنة السحابية';
+
+  @override
+  String get syncUnavailable => 'المزامنة السحابية غير متاحة';
+
+  @override
+  String get syncConnected => 'المزامنة السحابية جاهزة';
+
+  @override
+  String get syncNotSignedIn => 'سجّل الدخول لتفعيل المزامنة السحابية';
+
+  @override
+  String get syncDisabledByPreference =>
+      'المزامنة السحابية معطلة على هذا الجهاز';
+
+  @override
+  String get syncNotConfiguredHelp =>
+      'لم يتم إعداد Firebase بعد. شغّل FlutterFire configure واستبدل ملف firebase_options.dart.';
+
+  @override
+  String get syncEnableCloud => 'تفعيل المزامنة السحابية';
+
+  @override
+  String get syncEnableCloudDesc =>
+      'السماح بتسجيل الدخول والمزامنة السحابية على هذا الجهاز.';
+
+  @override
+  String get syncEnableLive => 'تفعيل المزامنة الحية';
+
+  @override
+  String get syncEnableLiveDesc =>
+      'تطبيق التغييرات السحابية تلقائيًا أثناء تسجيل الدخول.';
+
+  @override
+  String get syncEnableAutoResume => 'مزامنة تلقائية عند العودة للتطبيق';
+
+  @override
+  String get syncEnableAutoResumeDesc =>
+      'سحب التغييرات السحابية تلقائيًا عند عودة التطبيق للواجهة.';
+
+  @override
+  String get syncEnableAutoPush => 'رفع تلقائي للتغييرات المحلية';
+
+  @override
+  String get syncEnableAutoPushDesc =>
+      'يرفع تعديلاتك المحلية تلقائيًا بعد مهلة قصيرة. وتبقى أزرار الرفع/السحب اليدوي متاحة.';
+
+  @override
+  String get syncRecentActivity => 'سجل المزامنة الأخير';
+
+  @override
+  String get syncNoRecentActivity => 'لا توجد عمليات مزامنة بعد';
+
+  @override
+  String get syncActivityPush => 'رفع يدوي';
+
+  @override
+  String get syncActivityAutoPush => 'رفع تلقائي (تغييرات محلية)';
+
+  @override
+  String get syncActivityPull => 'سحب يدوي';
+
+  @override
+  String get syncActivityAutoPull => 'سحب تلقائي (عند العودة)';
+
+  @override
+  String get syncActivityLive => 'تطبيق مزامنة حية';
+
+  @override
+  String syncActivityFailed(String action) {
+    return 'فشل $action';
+  }
+
+  @override
+  String syncActivityErrorCode(String code) {
+    return 'الخطأ: $code';
+  }
+
+  @override
+  String syncActivityCounts(
+    String summary,
+    int upserts,
+    int deletes,
+    int conflicts,
+  ) {
+    return '$summary • تحديثات: $upserts، حذف: $deletes، تعارضات: $conflicts';
+  }
+
+  @override
+  String get syncConflictLocalKeptHint =>
+      'تم حل التعارضات بالاحتفاظ بالتعديلات المحلية الأحدث.';
+
+  @override
+  String get syncConflictRemoteKeptHint =>
+      'تم حل التعارضات بالاحتفاظ بالتعديلات السحابية الأحدث.';
+
+  @override
+  String get syncConflictReviewHint =>
+      'راجع تفاصيل التعارض لمعرفة معرّفات الملاحظات المتأثرة.';
+
+  @override
+  String get syncConflictDetailsAction => 'تفاصيل التعارض';
+
+  @override
+  String get syncConflictDetailsTitle => 'تفاصيل التعارض (معرّفات الملاحظات)';
+
+  @override
+  String get syncSignIn => 'تسجيل الدخول';
+
+  @override
+  String get syncSignOut => 'تسجيل الخروج';
+
+  @override
+  String get syncPush => 'رفع';
+
+  @override
+  String get syncPull => 'سحب';
+
+  @override
+  String get syncSignedIn => 'تم تسجيل الدخول بنجاح';
+
+  @override
+  String get syncSignedOut => 'تم تسجيل الخروج';
+
+  @override
+  String get syncErrorGeneric => 'فشلت عملية المزامنة السحابية';
+
+  @override
+  String get syncErrorTimeout => 'انتهت مهلة المزامنة. حاول مرة أخرى.';
+
+  @override
+  String get syncErrorTimeoutHelp =>
+      'استغرقت العملية وقتًا طويلًا. تحقّق من الاتصال ثم أعد المحاولة.';
+
+  @override
+  String get syncErrorNetwork =>
+      'الشبكة غير متاحة. تحقّق من الاتصال ثم حاول مرة أخرى.';
+
+  @override
+  String get syncErrorNetworkHelp =>
+      'تم اكتشاف مشكلة في الشبكة. تحقّق من الاتصال ثم أعد المحاولة.';
+
+  @override
+  String get syncErrorPermissionDenied =>
+      'تم رفض المزامنة بواسطة قواعد Firestore';
+
+  @override
+  String get syncErrorPermissionDeniedHelp =>
+      'قواعد Firestore منعت العملية. تأكد أن القواعد تسمح بالمسار users/<uid>/notes للمستخدم الحالي.';
+
+  @override
+  String get syncErrorAuthRequired => 'يلزم تسجيل الدخول قبل المزامنة';
+
+  @override
+  String get syncErrorAuthOperationNotAllowed =>
+      'تسجيل الدخول المجهول غير مفعّل في Firebase Auth';
+
+  @override
+  String get syncErrorAuthOperationHelp =>
+      'فعّل Anonymous Sign-in من Firebase Console > Authentication > Sign-in method.';
+
+  @override
+  String get syncErrorFirestoreSetup =>
+      'قاعدة Firestore غير جاهزة لهذا المشروع بعد';
+
+  @override
+  String get syncErrorTooManyRequests =>
+      'عدد الطلبات كبير جدًا. انتظر قليلًا ثم أعد المحاولة.';
+
+  @override
+  String get syncErrorRetryHint =>
+      'يمكنك إعادة محاولة آخر عملية مزامنة بعد إصلاح السبب.';
+
+  @override
+  String get syncRetrySuccess => 'تمت إعادة محاولة عملية المزامنة';
+
+  @override
+  String get retryAction => 'إعادة المحاولة';
+
+  @override
+  String get syncStatusUnavailable => 'Firebase غير متاح (وضع محلي فقط).';
+
+  @override
+  String get syncStatusIdle => 'جاهز';
+
+  @override
+  String get syncStatusAuthRequired => 'يلزم تسجيل الدخول';
+
+  @override
+  String get syncStatusPushing => 'جارٍ رفع الملاحظات المحلية إلى السحابة...';
+
+  @override
+  String get syncStatusPulling =>
+      'جارٍ سحب الملاحظات السحابية إلى هذا الجهاز...';
+
+  @override
+  String get syncStatusLiveActive => 'المزامنة الحية مفعّلة';
+
+  @override
+  String get syncStatusLiveStopped => 'تم إيقاف المزامنة الحية';
+
+  @override
+  String get syncStatusLiveApplied => 'تم تطبيق التغييرات السحابية تلقائيًا';
+
+  @override
+  String get syncStatusLiveAppliedConflicts =>
+      'تم تطبيق المزامنة الحية (مع الاحتفاظ بالتعديلات المحلية الأحدث)';
+
+  @override
+  String get syncLastSyncNever => 'آخر مزامنة: لم تتم بعد';
+
+  @override
+  String syncLastSyncSummary(String date, String time, String summary) {
+    return 'آخر مزامنة: $date $time ($summary)';
+  }
+
+  @override
+  String get syncStatusSuccess => 'اكتملت المزامنة';
+
+  @override
+  String get syncStatusError => 'فشلت المزامنة';
+
+  @override
+  String get syncStatusPushComplete => 'اكتمل الرفع';
+
+  @override
+  String get syncStatusPullComplete => 'اكتمل السحب';
+
+  @override
+  String get syncStatusPushCompleteConflicts =>
+      'اكتمل الرفع (تم الاحتفاظ بالتعديلات الأحدث في السحابة)';
+
+  @override
+  String get syncStatusPullCompleteConflicts =>
+      'اكتمل السحب (تم الاحتفاظ بالتعديلات الأحدث محليًا)';
+
+  @override
+  String get syncStatusPullRemoteEmptyLocalKept =>
+      'السحابة فارغة؛ تم الاحتفاظ بالملاحظات المحلية (حماية من الحذف)';
+
+  @override
+  String syncUserId(String userId) {
+    return 'المستخدم: $userId';
+  }
+
+  @override
+  String syncPushDone(int upserts, int deletes, int skipped) {
+    return 'اكتمل الرفع: تم تحديث $upserts، وحذف $deletes، وتخطي $skipped تعارضات';
+  }
+
+  @override
+  String syncPullDone(int upserts, int deletes, int skipped) {
+    return 'اكتمل السحب: تم تحديث $upserts، وحذف $deletes محليًا، وتخطي $skipped تعارضات';
+  }
+
+  @override
   String get q1Title => 'مهم وعاجل';
 
   @override

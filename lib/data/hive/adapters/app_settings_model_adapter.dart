@@ -18,6 +18,12 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
     final rawThemeIndex = fields[0];
     final rawLanguageIndex = fields[1];
     final rawShowDone = fields[2];
+    final rawCloudSyncEnabled = fields[3];
+    final rawLiveSyncEnabled = fields[4];
+    final rawAutoSyncOnResumeEnabled = fields[5];
+    final rawLastSyncAt = fields[6];
+    final rawLastSyncStatusKey = fields[7];
+    final rawAutoPushLocalChangesEnabled = fields[8];
 
     final themePreference =
         rawThemeIndex is int &&
@@ -32,23 +38,58 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
         ? AppLanguageMode.values[rawLanguageIndex]
         : AppLanguageMode.system;
     final defaultShowDone = rawShowDone is bool ? rawShowDone : true;
+    final cloudSyncEnabled = rawCloudSyncEnabled is bool
+        ? rawCloudSyncEnabled
+        : true;
+    final liveSyncEnabled = rawLiveSyncEnabled is bool
+        ? rawLiveSyncEnabled
+        : true;
+    final autoSyncOnResumeEnabled = rawAutoSyncOnResumeEnabled is bool
+        ? rawAutoSyncOnResumeEnabled
+        : true;
+    final autoPushLocalChangesEnabled = rawAutoPushLocalChangesEnabled is bool
+        ? rawAutoPushLocalChangesEnabled
+        : false;
+    final lastSyncAt = rawLastSyncAt is DateTime ? rawLastSyncAt : null;
+    final lastSyncStatusKey =
+        rawLastSyncStatusKey is String && rawLastSyncStatusKey.isNotEmpty
+        ? rawLastSyncStatusKey
+        : null;
 
     return AppSettingsModel(
       themePreference: themePreference,
       languageMode: languageMode,
       defaultShowDone: defaultShowDone,
+      cloudSyncEnabled: cloudSyncEnabled,
+      liveSyncEnabled: liveSyncEnabled,
+      autoSyncOnResumeEnabled: autoSyncOnResumeEnabled,
+      autoPushLocalChangesEnabled: autoPushLocalChangesEnabled,
+      lastSyncAt: lastSyncAt,
+      lastSyncStatusKey: lastSyncStatusKey,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppSettingsModel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.themePreference.index)
       ..writeByte(1)
       ..write(obj.languageMode.index)
       ..writeByte(2)
-      ..write(obj.defaultShowDone);
+      ..write(obj.defaultShowDone)
+      ..writeByte(3)
+      ..write(obj.cloudSyncEnabled)
+      ..writeByte(4)
+      ..write(obj.liveSyncEnabled)
+      ..writeByte(5)
+      ..write(obj.autoSyncOnResumeEnabled)
+      ..writeByte(6)
+      ..write(obj.lastSyncAt)
+      ..writeByte(7)
+      ..write(obj.lastSyncStatusKey)
+      ..writeByte(8)
+      ..write(obj.autoPushLocalChangesEnabled);
   }
 }

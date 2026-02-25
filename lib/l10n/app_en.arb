@@ -31,6 +31,153 @@
   "defaultShowDone": "Default show done",
   "syncComingSoon": "Sync (coming soon)",
   "syncComingSoonDesc": "Firebase auth + cloud sync will be added in Phase 2.",
+  "syncSectionTitle": "Cloud Sync",
+  "syncUnavailable": "Cloud sync unavailable",
+  "syncConnected": "Cloud sync ready",
+  "syncNotSignedIn": "Sign in to enable cloud sync",
+  "syncDisabledByPreference": "Cloud sync is disabled on this device",
+  "syncNotConfiguredHelp": "Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.",
+  "syncEnableCloud": "Enable cloud sync",
+  "syncEnableCloudDesc": "Allow sign-in and cloud sync on this device.",
+  "syncEnableLive": "Enable live sync",
+  "syncEnableLiveDesc": "Apply remote changes automatically while signed in.",
+  "syncEnableAutoResume": "Auto sync on app resume",
+  "syncEnableAutoResumeDesc": "Automatically pull cloud changes when the app returns to foreground.",
+  "syncEnableAutoPush": "Auto push local changes",
+  "syncEnableAutoPushDesc": "Push local edits in the background after a short delay. Manual push/pull controls stay available.",
+  "syncRecentActivity": "Recent sync activity",
+  "syncNoRecentActivity": "No sync activity yet",
+  "syncActivityPush": "Manual push",
+  "syncActivityAutoPush": "Auto push (local changes)",
+  "syncActivityPull": "Manual pull",
+  "syncActivityAutoPull": "Auto pull (resume)",
+  "syncActivityLive": "Live sync apply",
+  "syncActivityFailed": "{action} failed",
+  "@syncActivityFailed": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActivityErrorCode": "Error: {code}",
+  "@syncActivityErrorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActivityCounts": "{summary} • upserts: {upserts}, deletes: {deletes}, conflicts: {conflicts}",
+  "@syncActivityCounts": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      },
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "conflicts": {
+        "type": "int"
+      }
+    }
+  },
+  "syncConflictLocalKeptHint": "Conflicts resolved by keeping newer local changes.",
+  "syncConflictRemoteKeptHint": "Conflicts resolved by keeping newer cloud changes.",
+  "syncConflictReviewHint": "Review conflict details to inspect affected note IDs.",
+  "syncConflictDetailsAction": "Conflict details",
+  "syncConflictDetailsTitle": "Conflict details (note IDs)",
+  "syncSignIn": "Sign in",
+  "syncSignOut": "Sign out",
+  "syncPush": "Push",
+  "syncPull": "Pull",
+  "syncSignedIn": "Signed in successfully",
+  "syncSignedOut": "Signed out",
+  "syncErrorGeneric": "Cloud sync action failed",
+  "syncErrorTimeout": "Sync timed out. Please try again.",
+  "syncErrorTimeoutHelp": "The operation took too long. Check your connection and retry.",
+  "syncErrorNetwork": "Network unavailable. Check your connection and try again.",
+  "syncErrorNetworkHelp": "Network issue detected. Verify connectivity, then retry.",
+  "syncErrorPermissionDenied": "Cloud sync denied by Firestore rules",
+  "syncErrorPermissionDeniedHelp": "Firestore rules blocked this action. Confirm rules allow users/<uid>/notes for the signed-in user.",
+  "syncErrorAuthRequired": "Sign in is required before sync",
+  "syncErrorAuthOperationNotAllowed": "Anonymous sign-in is disabled in Firebase Auth",
+  "syncErrorAuthOperationHelp": "Enable Anonymous sign-in in Firebase Console > Authentication > Sign-in method.",
+  "syncErrorFirestoreSetup": "Firestore is not ready for this project yet",
+  "syncErrorTooManyRequests": "Too many requests. Please wait and retry.",
+  "syncErrorRetryHint": "You can retry the last sync action after fixing the issue.",
+  "syncRetrySuccess": "Retried sync action",
+  "retryAction": "Retry",
+  "syncStatusUnavailable": "Firebase is unavailable (local-only mode).",
+  "syncStatusIdle": "Idle",
+  "syncStatusAuthRequired": "Authentication required",
+  "syncStatusPushing": "Pushing local notes to cloud...",
+  "syncStatusPulling": "Pulling cloud notes to this device...",
+  "syncStatusLiveActive": "Live sync is active",
+  "syncStatusLiveStopped": "Live sync stopped",
+  "syncStatusLiveApplied": "Live sync applied remote changes",
+  "syncStatusLiveAppliedConflicts": "Live sync applied (newer local changes were kept)",
+  "syncLastSyncNever": "Last sync: never",
+  "syncLastSyncSummary": "Last sync: {date} {time} ({summary})",
+  "@syncLastSyncSummary": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "syncStatusSuccess": "Sync completed",
+  "syncStatusError": "Sync failed",
+  "syncStatusPushComplete": "Push completed",
+  "syncStatusPullComplete": "Pull completed",
+  "syncStatusPushCompleteConflicts": "Push completed (newer cloud changes were kept)",
+  "syncStatusPullCompleteConflicts": "Pull completed (newer local changes were kept)",
+  "syncStatusPullRemoteEmptyLocalKept": "Cloud is empty; local notes were kept (safety check)",
+  "syncUserId": "User: {userId}",
+  "@syncUserId": {
+    "placeholders": {
+      "userId": {
+        "type": "String"
+      }
+    }
+  },
+  "syncPushDone": "Push complete: {upserts} updated, {deletes} removed, {skipped} conflicts skipped",
+  "@syncPushDone": {
+    "placeholders": {
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "syncPullDone": "Pull complete: {upserts} updated, {deletes} removed locally, {skipped} conflicts skipped",
+  "@syncPullDone": {
+    "placeholders": {
+      "upserts": {
+        "type": "int"
+      },
+      "deletes": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
   "q1Title": "Important & Urgent",
   "q2Title": "Important & Not Urgent",
   "q3Title": "Not Important & Urgent",

@@ -22,6 +22,18 @@ It helps you classify tasks into 4 quadrants and prioritize execution with a sti
 - Light/Dark/System themes
 - Responsive UX for web/mobile/desktop
 
+## Phase 2 (In Progress)
+
+- Firebase anonymous authentication (settings-driven sign in/out)
+- Firestore cloud sync with manual actions (Push / Pull)
+- Live sync listener after sign-in (remote changes pulled automatically)
+- Auto-pull on app resume with throttling
+- Persisted sync preferences (cloud on/off, live sync, resume auto-sync)
+- Optional debounced auto-push for local changes (default off)
+- Persisted last-sync summary in Settings
+- Recent sync activity history with conflict details
+- Local-only fallback when Firebase is not configured yet
+
 ## Tech Stack
 
 - Flutter
@@ -41,6 +53,46 @@ It helps you classify tasks into 4 quadrants and prioritize execution with a sti
 
 ```bash
 flutter pub get
+```
+
+### Firebase setup (Phase 2)
+
+Phase 2 code is wired, but the repo intentionally ships with a placeholder
+`lib/firebase_options.dart` so the app remains runnable in local-only mode.
+
+Configure Firebase for project `q4-board-prod`:
+
+```bash
+dart pub global activate flutterfire_cli
+flutterfire configure --project=q4-board-prod
+```
+
+Then replace the placeholder `lib/firebase_options.dart` with the generated file.
+
+### Firestore rules (required for sync)
+
+Deploy the included production-oriented rules before using Push/Pull sync:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Rules file:
+- `firestore.rules`
+
+### Firebase Emulator smoke test (sync)
+
+Start emulators:
+
+```bash
+firebase emulators:start --only auth,firestore
+```
+
+Run the emulator sync roundtrip test (disabled by default unless enabled):
+
+```bash
+flutter test integration_test/firebase_sync_emulator_test.dart -d macos \
+  --dart-define=RUN_FIREBASE_EMULATOR_SYNC_TEST=true
 ```
 
 ### Run (Web)
@@ -125,16 +177,20 @@ dart run flutter_native_splash:create
 ## Roadmap
 
 - **Phase 1**: Local-first MVP (done)
-- **Phase 2**: Authentication + cloud sync (planned)
+- **Phase 2**: Authentication + cloud sync (in progress)
 - **Later phases**: richer planning workflows, productivity insights, and integrations
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for details.
+Deployment/setup checklist: [`docs/PHASE2_ROLLOUT_CHECKLIST.md`](docs/PHASE2_ROLLOUT_CHECKLIST.md)
 
 ## Known Issues
 
 - Desktop/Web drag can still show a visual jump/snap at drag start in some cases. This is tracked and will be improved in a coming UI iteration.
 - Minor drag-feel differences may appear across browsers because pointer/drag behavior differs by engine.
 - macOS native splash customization is limited in the current generator setup; Android/Web splash is branded, macOS currently relies on icon + default startup window.
+- Firestore sync supports manual `Push` / `Pull` plus a live listener (remote-to-local) after sign-in.
+- Auto-push local changes is optional and disabled by default pending product approval.
+- If Push/Pull returns `permission-denied`, your Firestore rules are blocking `users/{uid}/notes/{noteId}` for the signed-in user.
 
 ## Quality Checks
 
@@ -142,6 +198,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for details.
 flutter analyze
 flutter test
 flutter test integration_test/app_smoke_test.dart -d macos
+flutter test integration_test/firebase_sync_emulator_test.dart -d macos --dart-define=RUN_FIREBASE_EMULATOR_SYNC_TEST=true
 ```
 
 Note: `integration_test` on macOS can fail when the repo is inside a cloud-synced folder (for example OneDrive) because injected file metadata may break codesigning of the temporary app bundle.

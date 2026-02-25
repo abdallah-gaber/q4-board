@@ -20,6 +20,9 @@ void main() {
         themePreference: ThemePreference.light,
         languageMode: AppLanguageMode.english,
         defaultShowDone: true,
+        cloudSyncEnabled: true,
+        liveSyncEnabled: true,
+        autoSyncOnResumeEnabled: true,
       ),
     );
 

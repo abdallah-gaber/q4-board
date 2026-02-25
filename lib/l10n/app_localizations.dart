@@ -284,6 +284,437 @@ abstract class AppLocalizations {
   /// **'Firebase auth + cloud sync will be added in Phase 2.'**
   String get syncComingSoonDesc;
 
+  /// No description provided for @syncSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync'**
+  String get syncSectionTitle;
+
+  /// No description provided for @syncUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync unavailable'**
+  String get syncUnavailable;
+
+  /// No description provided for @syncConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync ready'**
+  String get syncConnected;
+
+  /// No description provided for @syncNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to enable cloud sync'**
+  String get syncNotSignedIn;
+
+  /// No description provided for @syncDisabledByPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync is disabled on this device'**
+  String get syncDisabledByPreference;
+
+  /// No description provided for @syncNotConfiguredHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase is not configured yet. Run FlutterFire configure and replace firebase_options.dart.'**
+  String get syncNotConfiguredHelp;
+
+  /// No description provided for @syncEnableCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable cloud sync'**
+  String get syncEnableCloud;
+
+  /// No description provided for @syncEnableCloudDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow sign-in and cloud sync on this device.'**
+  String get syncEnableCloudDesc;
+
+  /// No description provided for @syncEnableLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable live sync'**
+  String get syncEnableLive;
+
+  /// No description provided for @syncEnableLiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply remote changes automatically while signed in.'**
+  String get syncEnableLiveDesc;
+
+  /// No description provided for @syncEnableAutoResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto sync on app resume'**
+  String get syncEnableAutoResume;
+
+  /// No description provided for @syncEnableAutoResumeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically pull cloud changes when the app returns to foreground.'**
+  String get syncEnableAutoResumeDesc;
+
+  /// No description provided for @syncEnableAutoPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto push local changes'**
+  String get syncEnableAutoPush;
+
+  /// No description provided for @syncEnableAutoPushDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Push local edits in the background after a short delay. Manual push/pull controls stay available.'**
+  String get syncEnableAutoPushDesc;
+
+  /// No description provided for @syncRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent sync activity'**
+  String get syncRecentActivity;
+
+  /// No description provided for @syncNoRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No sync activity yet'**
+  String get syncNoRecentActivity;
+
+  /// No description provided for @syncActivityPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual push'**
+  String get syncActivityPush;
+
+  /// No description provided for @syncActivityAutoPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto push (local changes)'**
+  String get syncActivityAutoPush;
+
+  /// No description provided for @syncActivityPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual pull'**
+  String get syncActivityPull;
+
+  /// No description provided for @syncActivityAutoPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto pull (resume)'**
+  String get syncActivityAutoPull;
+
+  /// No description provided for @syncActivityLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync apply'**
+  String get syncActivityLive;
+
+  /// No description provided for @syncActivityFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} failed'**
+  String syncActivityFailed(String action);
+
+  /// No description provided for @syncActivityErrorCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {code}'**
+  String syncActivityErrorCode(String code);
+
+  /// No description provided for @syncActivityCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'{summary} • upserts: {upserts}, deletes: {deletes}, conflicts: {conflicts}'**
+  String syncActivityCounts(
+    String summary,
+    int upserts,
+    int deletes,
+    int conflicts,
+  );
+
+  /// No description provided for @syncConflictLocalKeptHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts resolved by keeping newer local changes.'**
+  String get syncConflictLocalKeptHint;
+
+  /// No description provided for @syncConflictRemoteKeptHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts resolved by keeping newer cloud changes.'**
+  String get syncConflictRemoteKeptHint;
+
+  /// No description provided for @syncConflictReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Review conflict details to inspect affected note IDs.'**
+  String get syncConflictReviewHint;
+
+  /// No description provided for @syncConflictDetailsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict details'**
+  String get syncConflictDetailsAction;
+
+  /// No description provided for @syncConflictDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict details (note IDs)'**
+  String get syncConflictDetailsTitle;
+
+  /// No description provided for @syncSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get syncSignIn;
+
+  /// No description provided for @syncSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get syncSignOut;
+
+  /// No description provided for @syncPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Push'**
+  String get syncPush;
+
+  /// No description provided for @syncPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull'**
+  String get syncPull;
+
+  /// No description provided for @syncSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in successfully'**
+  String get syncSignedIn;
+
+  /// No description provided for @syncSignedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed out'**
+  String get syncSignedOut;
+
+  /// No description provided for @syncErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync action failed'**
+  String get syncErrorGeneric;
+
+  /// No description provided for @syncErrorTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync timed out. Please try again.'**
+  String get syncErrorTimeout;
+
+  /// No description provided for @syncErrorTimeoutHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation took too long. Check your connection and retry.'**
+  String get syncErrorTimeoutHelp;
+
+  /// No description provided for @syncErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network unavailable. Check your connection and try again.'**
+  String get syncErrorNetwork;
+
+  /// No description provided for @syncErrorNetworkHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Network issue detected. Verify connectivity, then retry.'**
+  String get syncErrorNetworkHelp;
+
+  /// No description provided for @syncErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync denied by Firestore rules'**
+  String get syncErrorPermissionDenied;
+
+  /// No description provided for @syncErrorPermissionDeniedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore rules blocked this action. Confirm rules allow users/<uid>/notes for the signed-in user.'**
+  String get syncErrorPermissionDeniedHelp;
+
+  /// No description provided for @syncErrorAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in is required before sync'**
+  String get syncErrorAuthRequired;
+
+  /// No description provided for @syncErrorAuthOperationNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous sign-in is disabled in Firebase Auth'**
+  String get syncErrorAuthOperationNotAllowed;
+
+  /// No description provided for @syncErrorAuthOperationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Anonymous sign-in in Firebase Console > Authentication > Sign-in method.'**
+  String get syncErrorAuthOperationHelp;
+
+  /// No description provided for @syncErrorFirestoreSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Firestore is not ready for this project yet'**
+  String get syncErrorFirestoreSetup;
+
+  /// No description provided for @syncErrorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait and retry.'**
+  String get syncErrorTooManyRequests;
+
+  /// No description provided for @syncErrorRetryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can retry the last sync action after fixing the issue.'**
+  String get syncErrorRetryHint;
+
+  /// No description provided for @syncRetrySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Retried sync action'**
+  String get syncRetrySuccess;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryAction;
+
+  /// No description provided for @syncStatusUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase is unavailable (local-only mode).'**
+  String get syncStatusUnavailable;
+
+  /// No description provided for @syncStatusIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Idle'**
+  String get syncStatusIdle;
+
+  /// No description provided for @syncStatusAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication required'**
+  String get syncStatusAuthRequired;
+
+  /// No description provided for @syncStatusPushing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pushing local notes to cloud...'**
+  String get syncStatusPushing;
+
+  /// No description provided for @syncStatusPulling.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulling cloud notes to this device...'**
+  String get syncStatusPulling;
+
+  /// No description provided for @syncStatusLiveActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync is active'**
+  String get syncStatusLiveActive;
+
+  /// No description provided for @syncStatusLiveStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync stopped'**
+  String get syncStatusLiveStopped;
+
+  /// No description provided for @syncStatusLiveApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync applied remote changes'**
+  String get syncStatusLiveApplied;
+
+  /// No description provided for @syncStatusLiveAppliedConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sync applied (newer local changes were kept)'**
+  String get syncStatusLiveAppliedConflicts;
+
+  /// No description provided for @syncLastSyncNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: never'**
+  String get syncLastSyncNever;
+
+  /// No description provided for @syncLastSyncSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {date} {time} ({summary})'**
+  String syncLastSyncSummary(String date, String time, String summary);
+
+  /// No description provided for @syncStatusSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed'**
+  String get syncStatusSuccess;
+
+  /// No description provided for @syncStatusError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed'**
+  String get syncStatusError;
+
+  /// No description provided for @syncStatusPushComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Push completed'**
+  String get syncStatusPushComplete;
+
+  /// No description provided for @syncStatusPullComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull completed'**
+  String get syncStatusPullComplete;
+
+  /// No description provided for @syncStatusPushCompleteConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Push completed (newer cloud changes were kept)'**
+  String get syncStatusPushCompleteConflicts;
+
+  /// No description provided for @syncStatusPullCompleteConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull completed (newer local changes were kept)'**
+  String get syncStatusPullCompleteConflicts;
+
+  /// No description provided for @syncStatusPullRemoteEmptyLocalKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud is empty; local notes were kept (safety check)'**
+  String get syncStatusPullRemoteEmptyLocalKept;
+
+  /// No description provided for @syncUserId.
+  ///
+  /// In en, this message translates to:
+  /// **'User: {userId}'**
+  String syncUserId(String userId);
+
+  /// No description provided for @syncPushDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Push complete: {upserts} updated, {deletes} removed, {skipped} conflicts skipped'**
+  String syncPushDone(int upserts, int deletes, int skipped);
+
+  /// No description provided for @syncPullDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull complete: {upserts} updated, {deletes} removed locally, {skipped} conflicts skipped'**
+  String syncPullDone(int upserts, int deletes, int skipped);
+
   /// No description provided for @q1Title.
   ///
   /// In en, this message translates to:

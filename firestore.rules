@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function validQuadrant(value) {
+      return value is string &&
+        (value == 'iu' || value == 'inu' || value == 'niu' || value == 'ninu');
+    }
+
+    function validOptionalString(value, maxLen) {
+      return value == null || (value is string && value.size() <= maxLen);
+    }
+
+    function validRequiredString(value, maxLen) {
+      return value is string && value.size() > 0 && value.size() <= maxLen;
+    }
+
+    function validTimestamp(value) {
+      return value is timestamp;
+    }
+
+    function validOptionalTimestamp(value) {
+      return value == null || value is timestamp;
+    }
+
+    function validOrderIndex(value) {
+      return value is int || value is float;
+    }
+
+    function allowedNoteKeys() {
+      return [
+        'quadrantType',
+        'title',
+        'description',
+        'dueAt',
+        'isDone',
+        'orderIndex',
+        'createdAt',
+        'updatedAt',
+      ];
+    }
+
+    function validNoteData(data) {
+      return data.keys().hasOnly(allowedNoteKeys()) &&
+        validQuadrant(data.quadrantType) &&
+        validRequiredString(data.title, 160) &&
+        validOptionalString(data.description, 2000) &&
+        validOptionalTimestamp(data.dueAt) &&
+        data.isDone is bool &&
+        validOrderIndex(data.orderIndex) &&
+        validTimestamp(data.createdAt) &&
+        validTimestamp(data.updatedAt) &&
+        data.createdAt <= data.updatedAt;
+    }
+
+    match /users/{userId}/notes/{noteId} {
+      function validNoteId() {
+        return noteId.size() > 0 && noteId.size() <= 128;
+      }
+
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) &&
+        validNoteId() &&
+        validNoteData(request.resource.data);
+      allow update: if isOwner(userId) &&
+        validNoteId() &&
+        validNoteData(request.resource.data) &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        request.resource.data.updatedAt >= resource.data.updatedAt;
+      allow delete: if isOwner(userId);
+    }
+  }
+}

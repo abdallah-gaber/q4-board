@@ -21,6 +21,9 @@ void main() {
         themePreference: ThemePreference.system,
         languageMode: AppLanguageMode.english,
         defaultShowDone: true,
+        cloudSyncEnabled: true,
+        liveSyncEnabled: true,
+        autoSyncOnResumeEnabled: true,
       ),
     );
 

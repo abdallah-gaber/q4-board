@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/firebase/firebase_bootstrap.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../domain/entities/app_settings_entity.dart';
+import '../../../domain/entities/note_entity.dart';
+import '../../../domain/repositories/note_repository.dart';
 import '../../../domain/repositories/settings_repository.dart';
 import '../../../domain/repositories/sync_repository.dart';
 import '../../../domain/services/auth_service.dart';
@@ -13,6 +15,7 @@ final syncControllerProvider =
     StateNotifierProvider<SyncController, SyncControllerState>(
       (ref) => SyncController(
         authService: ref.watch(authServiceProvider),
+        noteRepository: ref.watch(noteRepositoryProvider),
         syncRepository: ref.watch(syncRepositoryProvider),
         settingsRepository: ref.watch(settingsRepositoryProvider),
         bootstrapState: ref.watch(firebaseBootstrapStateProvider),
@@ -79,7 +82,7 @@ enum SyncActionType { signIn, signOut, push, pull }
 
 enum SyncConflictResolution { localKept, remoteKept }
 
-enum SyncActivityKind { push, pull, autoPull, live }
+enum SyncActivityKind { push, autoPush, pull, autoPull, live }
 
 class SyncActivityEntry {
   const SyncActivityEntry({
@@ -124,14 +127,18 @@ class SyncActionError {
 class SyncController extends StateNotifier<SyncControllerState> {
   SyncController({
     required AuthService authService,
+    required NoteRepository noteRepository,
     required SyncRepository syncRepository,
     required SettingsRepository settingsRepository,
     required FirebaseBootstrapState bootstrapState,
     Duration operationTimeout = const Duration(seconds: 20),
+    Duration autoPushDebounce = const Duration(seconds: 2),
   }) : _authService = authService,
+       _noteRepository = noteRepository,
        _syncRepository = syncRepository,
        _settingsRepository = settingsRepository,
        _operationTimeout = operationTimeout,
+       _autoPushDebounce = autoPushDebounce,
        super(SyncControllerState.initial(bootstrapState)) {
     _settingsSub = _settingsRepository.watchSettings().listen((settings) {
       _settings = settings;
@@ -143,26 +150,35 @@ class SyncController extends StateNotifier<SyncControllerState> {
     });
     _syncSub = _syncRepository.watchStatus().listen((syncStatus) {
       state = state.copyWith(syncStatus: syncStatus);
+      _trackRemoteApplyForAutoPush(syncStatus);
       _recordLiveActivityIfNeeded(syncStatus);
       unawaited(_persistSyncMetadataIfNeeded(syncStatus));
     });
+    _notesSub = _noteRepository.watchNotes().listen(_handleLocalNotesChanged);
   }
 
   final AuthService _authService;
+  final NoteRepository _noteRepository;
   final SyncRepository _syncRepository;
   final SettingsRepository _settingsRepository;
   final Duration _operationTimeout;
+  final Duration _autoPushDebounce;
   AppSettingsEntity _settings = AppSettingsEntity.defaults();
   DateTime? _lastAutoPullAt;
+  DateTime? _suppressAutoPushUntil;
   bool _liveSyncRunning = false;
   bool _applyingPreferences = false;
   bool _pendingPreferences = false;
   SyncStatusSnapshot? _lastPersistedSuccessStatus;
   bool _persistingSyncMetadata = false;
   bool _pendingPersistSyncMetadata = false;
+  bool _seenInitialNotesSnapshot = false;
+  String? _lastNotesFingerprint;
+  Timer? _autoPushDebounceTimer;
   late final StreamSubscription<AppSettingsEntity> _settingsSub;
   late final StreamSubscription<AuthSession> _authSub;
   late final StreamSubscription<SyncStatusSnapshot> _syncSub;
+  late final StreamSubscription<List<NoteEntity>> _notesSub;
 
   Future<void> signIn() => _runBusy(SyncActionType.signIn, _authService.signIn);
 
@@ -186,6 +202,7 @@ class SyncController extends StateNotifier<SyncControllerState> {
   }
 
   Future<SyncOperationResult> pull() async {
+    _suppressAutoPushUntil = DateTime.now().add(const Duration(seconds: 3));
     try {
       final result = await _runBusy(SyncActionType.pull, _syncRepository.pull);
       _recordActivityFromResult(
@@ -232,6 +249,7 @@ class SyncController extends StateNotifier<SyncControllerState> {
       return;
     }
     _lastAutoPullAt = now;
+    _suppressAutoPushUntil = now.add(const Duration(seconds: 3));
     try {
       final result = await _runBusy(SyncActionType.pull, _syncRepository.pull);
       _recordActivityFromResult(
@@ -289,6 +307,7 @@ class SyncController extends StateNotifier<SyncControllerState> {
     if (!session.isAuthenticated) {
       await _stopLiveSyncIfNeeded();
       _lastAutoPullAt = null;
+      _cancelAutoPushDebounce();
       return;
     }
     try {
@@ -326,6 +345,9 @@ class SyncController extends StateNotifier<SyncControllerState> {
           await _startLiveSyncIfNeeded();
         } else {
           await _stopLiveSyncIfNeeded();
+        }
+        if (!_canAutoPushLocalChanges) {
+          _cancelAutoPushDebounce();
         }
       } while (_pendingPreferences);
     } finally {
@@ -491,9 +513,112 @@ class SyncController extends StateNotifier<SyncControllerState> {
     return match?.group(1);
   }
 
+  bool get _canAutoPushLocalChanges =>
+      state.bootstrapState.isAvailable &&
+      state.session.isAuthenticated &&
+      _settings.cloudSyncEnabled &&
+      _settings.autoPushLocalChangesEnabled;
+
+  void _handleLocalNotesChanged(List<NoteEntity> notes) {
+    final fingerprint = _notesFingerprint(notes);
+    if (!_seenInitialNotesSnapshot) {
+      _seenInitialNotesSnapshot = true;
+      _lastNotesFingerprint = fingerprint;
+      return;
+    }
+    if (fingerprint == _lastNotesFingerprint) {
+      return;
+    }
+    _lastNotesFingerprint = fingerprint;
+
+    if (!_canAutoPushLocalChanges) {
+      return;
+    }
+    final now = DateTime.now();
+    if (_suppressAutoPushUntil != null &&
+        now.isBefore(_suppressAutoPushUntil!)) {
+      return;
+    }
+    _scheduleAutoPush();
+  }
+
+  void _scheduleAutoPush() {
+    _autoPushDebounceTimer?.cancel();
+    _autoPushDebounceTimer = Timer(_autoPushDebounce, () {
+      unawaited(_runAutoPushIfEligible());
+    });
+  }
+
+  void _cancelAutoPushDebounce() {
+    _autoPushDebounceTimer?.cancel();
+    _autoPushDebounceTimer = null;
+  }
+
+  Future<void> _runAutoPushIfEligible() async {
+    if (!_canAutoPushLocalChanges) {
+      return;
+    }
+    final now = DateTime.now();
+    if (_suppressAutoPushUntil != null &&
+        now.isBefore(_suppressAutoPushUntil!)) {
+      return;
+    }
+    if (state.isBusy) {
+      _scheduleAutoPush();
+      return;
+    }
+    try {
+      final result = await _runBusy(SyncActionType.push, _syncRepository.push);
+      _recordActivityFromResult(
+        kind: SyncActivityKind.autoPush,
+        result: result,
+        summaryKey: 'push_complete',
+        conflictResolution: SyncConflictResolution.remoteKept,
+      );
+    } catch (error) {
+      _recordFailedActivity(kind: SyncActivityKind.autoPush, error: error);
+      // Errors surface in existing sync status and retry UI.
+    }
+  }
+
+  void _trackRemoteApplyForAutoPush(SyncStatusSnapshot status) {
+    final key = status.lastMessage;
+    final remoteApplied =
+        (status.code == SyncStatusCode.success &&
+            (key == 'pull_complete' ||
+                key == 'pull_conflicts_skipped' ||
+                key == 'pull_remote_empty_local_kept')) ||
+        (status.code == SyncStatusCode.liveListening &&
+            (key == 'live_sync_applied' ||
+                key == 'live_sync_applied_conflicts' ||
+                key == 'live_sync_remote_empty_local_kept'));
+    if (!remoteApplied) {
+      return;
+    }
+    _suppressAutoPushUntil = DateTime.now().add(const Duration(seconds: 3));
+  }
+
+  String _notesFingerprint(List<NoteEntity> notes) {
+    final buffer = StringBuffer();
+    for (final note in notes) {
+      buffer
+        ..write(note.id)
+        ..write('|')
+        ..write(note.updatedAt.microsecondsSinceEpoch)
+        ..write('|')
+        ..write(note.quadrantType.index)
+        ..write('|')
+        ..write(note.orderIndex)
+        ..write(';');
+    }
+    return buffer.toString();
+  }
+
   @override
   void dispose() {
     unawaited(_syncRepository.stopLiveSync());
+    _cancelAutoPushDebounce();
+    _notesSub.cancel();
     _settingsSub.cancel();
     _authSub.cancel();
     _syncSub.cancel();

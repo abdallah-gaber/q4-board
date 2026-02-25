@@ -60,6 +60,12 @@ class SettingsController extends StateNotifier<AppSettingsEntity> {
     );
   }
 
+  Future<void> setAutoPushLocalChangesEnabled(bool value) async {
+    await _settingsRepository.saveSettings(
+      state.copyWith(autoPushLocalChangesEnabled: value),
+    );
+  }
+
   @override
   void dispose() {
     _subscription.cancel();

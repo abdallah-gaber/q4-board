@@ -104,6 +104,8 @@ class SettingsScreen extends ConsumerWidget {
               onLiveSyncEnabledChanged: controller.setLiveSyncEnabled,
               onAutoSyncOnResumeEnabledChanged:
                   controller.setAutoSyncOnResumeEnabled,
+              onAutoPushLocalChangesEnabledChanged:
+                  controller.setAutoPushLocalChangesEnabled,
             ),
           ),
           if (kDebugMode) ...[
@@ -390,6 +392,7 @@ class _SyncSection extends StatelessWidget {
     required this.onCloudSyncEnabledChanged,
     required this.onLiveSyncEnabledChanged,
     required this.onAutoSyncOnResumeEnabledChanged,
+    required this.onAutoPushLocalChangesEnabledChanged,
   });
 
   final AppSettingsEntity appSettings;
@@ -402,6 +405,7 @@ class _SyncSection extends StatelessWidget {
   final ValueChanged<bool> onCloudSyncEnabledChanged;
   final ValueChanged<bool> onLiveSyncEnabledChanged;
   final ValueChanged<bool> onAutoSyncOnResumeEnabledChanged;
+  final ValueChanged<bool> onAutoPushLocalChangesEnabledChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -411,6 +415,7 @@ class _SyncSection extends StatelessWidget {
     final cloudSyncEnabled = appSettings.cloudSyncEnabled;
     final liveSyncEnabled = appSettings.liveSyncEnabled;
     final autoSyncOnResumeEnabled = appSettings.autoSyncOnResumeEnabled;
+    final autoPushLocalChangesEnabled = appSettings.autoPushLocalChangesEnabled;
     final actionsEnabled = canUseCloud && cloudSyncEnabled;
 
     return Column(
@@ -464,6 +469,15 @@ class _SyncSection extends StatelessWidget {
               : null,
           title: Text(l10n.syncEnableAutoResume),
           subtitle: Text(l10n.syncEnableAutoResumeDesc),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          value: autoPushLocalChangesEnabled,
+          onChanged: (actionsEnabled && !state.isBusy && isSignedIn)
+              ? onAutoPushLocalChangesEnabledChanged
+              : null,
+          title: Text(l10n.syncEnableAutoPush),
+          subtitle: Text(l10n.syncEnableAutoPushDesc),
         ),
         if (state.session.userId != null) ...[
           const SizedBox(height: AppSpacing.xs),
@@ -787,6 +801,7 @@ class _SyncSection extends StatelessWidget {
   String _activityTitle(AppLocalizations l10n, SyncActivityEntry entry) {
     final prefix = switch (entry.kind) {
       SyncActivityKind.push => l10n.syncActivityPush,
+      SyncActivityKind.autoPush => l10n.syncActivityAutoPush,
       SyncActivityKind.pull => l10n.syncActivityPull,
       SyncActivityKind.autoPull => l10n.syncActivityAutoPull,
       SyncActivityKind.live => l10n.syncActivityLive,

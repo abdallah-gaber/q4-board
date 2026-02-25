@@ -23,6 +23,7 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
     final rawAutoSyncOnResumeEnabled = fields[5];
     final rawLastSyncAt = fields[6];
     final rawLastSyncStatusKey = fields[7];
+    final rawAutoPushLocalChangesEnabled = fields[8];
 
     final themePreference =
         rawThemeIndex is int &&
@@ -46,6 +47,9 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
     final autoSyncOnResumeEnabled = rawAutoSyncOnResumeEnabled is bool
         ? rawAutoSyncOnResumeEnabled
         : true;
+    final autoPushLocalChangesEnabled = rawAutoPushLocalChangesEnabled is bool
+        ? rawAutoPushLocalChangesEnabled
+        : false;
     final lastSyncAt = rawLastSyncAt is DateTime ? rawLastSyncAt : null;
     final lastSyncStatusKey =
         rawLastSyncStatusKey is String && rawLastSyncStatusKey.isNotEmpty
@@ -59,6 +63,7 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
       cloudSyncEnabled: cloudSyncEnabled,
       liveSyncEnabled: liveSyncEnabled,
       autoSyncOnResumeEnabled: autoSyncOnResumeEnabled,
+      autoPushLocalChangesEnabled: autoPushLocalChangesEnabled,
       lastSyncAt: lastSyncAt,
       lastSyncStatusKey: lastSyncStatusKey,
     );
@@ -67,7 +72,7 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
   @override
   void write(BinaryWriter writer, AppSettingsModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.themePreference.index)
       ..writeByte(1)
@@ -83,6 +88,8 @@ class AppSettingsModelAdapter extends TypeAdapter<AppSettingsModel> {
       ..writeByte(6)
       ..write(obj.lastSyncAt)
       ..writeByte(7)
-      ..write(obj.lastSyncStatusKey);
+      ..write(obj.lastSyncStatusKey)
+      ..writeByte(8)
+      ..write(obj.autoPushLocalChangesEnabled);
   }
 }

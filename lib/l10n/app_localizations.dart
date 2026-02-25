@@ -356,6 +356,18 @@ abstract class AppLocalizations {
   /// **'Automatically pull cloud changes when the app returns to foreground.'**
   String get syncEnableAutoResumeDesc;
 
+  /// No description provided for @syncEnableAutoPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto push local changes'**
+  String get syncEnableAutoPush;
+
+  /// No description provided for @syncEnableAutoPushDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Push local edits in the background after a short delay. Manual push/pull controls stay available.'**
+  String get syncEnableAutoPushDesc;
+
   /// No description provided for @syncRecentActivity.
   ///
   /// In en, this message translates to:
@@ -373,6 +385,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manual push'**
   String get syncActivityPush;
+
+  /// No description provided for @syncActivityAutoPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto push (local changes)'**
+  String get syncActivityAutoPush;
 
   /// No description provided for @syncActivityPull.
   ///

@@ -144,6 +144,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Automatically pull cloud changes when the app returns to foreground.';
 
   @override
+  String get syncEnableAutoPush => 'Auto push local changes';
+
+  @override
+  String get syncEnableAutoPushDesc =>
+      'Push local edits in the background after a short delay. Manual push/pull controls stay available.';
+
+  @override
   String get syncRecentActivity => 'Recent sync activity';
 
   @override
@@ -151,6 +158,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncActivityPush => 'Manual push';
+
+  @override
+  String get syncActivityAutoPush => 'Auto push (local changes)';
 
   @override
   String get syncActivityPull => 'Manual pull';

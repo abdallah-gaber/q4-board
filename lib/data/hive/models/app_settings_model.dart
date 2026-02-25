@@ -10,6 +10,7 @@ class AppSettingsModel {
     required this.cloudSyncEnabled,
     required this.liveSyncEnabled,
     required this.autoSyncOnResumeEnabled,
+    this.autoPushLocalChangesEnabled = false,
     this.lastSyncAt,
     this.lastSyncStatusKey,
   });
@@ -20,6 +21,7 @@ class AppSettingsModel {
   final bool cloudSyncEnabled;
   final bool liveSyncEnabled;
   final bool autoSyncOnResumeEnabled;
+  final bool autoPushLocalChangesEnabled;
   final DateTime? lastSyncAt;
   final String? lastSyncStatusKey;
 
@@ -30,6 +32,7 @@ class AppSettingsModel {
     cloudSyncEnabled: true,
     liveSyncEnabled: true,
     autoSyncOnResumeEnabled: true,
+    autoPushLocalChangesEnabled: false,
   );
 
   factory AppSettingsModel.fromEntity(AppSettingsEntity entity) =>
@@ -40,6 +43,7 @@ class AppSettingsModel {
         cloudSyncEnabled: entity.cloudSyncEnabled,
         liveSyncEnabled: entity.liveSyncEnabled,
         autoSyncOnResumeEnabled: entity.autoSyncOnResumeEnabled,
+        autoPushLocalChangesEnabled: entity.autoPushLocalChangesEnabled,
         lastSyncAt: entity.lastSyncAt,
         lastSyncStatusKey: entity.lastSyncStatusKey,
       );
@@ -51,6 +55,7 @@ class AppSettingsModel {
     cloudSyncEnabled: cloudSyncEnabled,
     liveSyncEnabled: liveSyncEnabled,
     autoSyncOnResumeEnabled: autoSyncOnResumeEnabled,
+    autoPushLocalChangesEnabled: autoPushLocalChangesEnabled,
     lastSyncAt: lastSyncAt,
     lastSyncStatusKey: lastSyncStatusKey,
   );

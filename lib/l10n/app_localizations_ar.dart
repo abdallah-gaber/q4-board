@@ -144,6 +144,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'سحب التغييرات السحابية تلقائيًا عند عودة التطبيق للواجهة.';
 
   @override
+  String get syncEnableAutoPush => 'رفع تلقائي للتغييرات المحلية';
+
+  @override
+  String get syncEnableAutoPushDesc =>
+      'يرفع تعديلاتك المحلية تلقائيًا بعد مهلة قصيرة. وتبقى أزرار الرفع/السحب اليدوي متاحة.';
+
+  @override
   String get syncRecentActivity => 'سجل المزامنة الأخير';
 
   @override
@@ -151,6 +158,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncActivityPush => 'رفع يدوي';
+
+  @override
+  String get syncActivityAutoPush => 'رفع تلقائي (تغييرات محلية)';
 
   @override
   String get syncActivityPull => 'سحب يدوي';

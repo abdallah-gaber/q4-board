@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:q4_board/core/firebase/firebase_bootstrap.dart';
 import 'package:q4_board/domain/entities/app_settings_entity.dart';
+import 'package:q4_board/domain/entities/note_entity.dart';
+import 'package:q4_board/domain/enums/quadrant_type.dart';
+import 'package:q4_board/domain/repositories/note_repository.dart';
 import 'package:q4_board/domain/repositories/sync_repository.dart';
 import 'package:q4_board/domain/repositories/settings_repository.dart';
 import 'package:q4_board/domain/services/auth_service.dart';
@@ -11,8 +14,10 @@ import 'package:q4_board/features/settings/controllers/sync_controller.dart';
 void main() {
   group('SyncController', () {
     test('records timeout error and clears busy state', () async {
+      final notes = _FakeNoteRepository();
       final controller = SyncController(
         authService: _FakeAuthService(),
+        noteRepository: notes,
         syncRepository: _NeverCompletesSyncRepository(),
         settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
@@ -21,7 +26,10 @@ void main() {
         ),
         operationTimeout: const Duration(milliseconds: 10),
       );
-      addTearDown(controller.dispose);
+      addTearDown(() async {
+        controller.dispose();
+        await notes.dispose();
+      });
 
       expect(controller.state.isBusy, isFalse);
 
@@ -35,8 +43,10 @@ void main() {
 
     test('retryLastAction reruns last failed action', () async {
       final repo = _FlakySyncRepository();
+      final notes = _FakeNoteRepository();
       final controller = SyncController(
         authService: _FakeAuthService(),
+        noteRepository: notes,
         syncRepository: repo,
         settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
@@ -44,7 +54,10 @@ void main() {
           isConfigured: true,
         ),
       );
-      addTearDown(controller.dispose);
+      addTearDown(() async {
+        controller.dispose();
+        await notes.dispose();
+      });
 
       await expectLater(controller.push(), throwsA(isA<StateError>()));
       expect(repo.pushCalls, 1);
@@ -59,8 +72,10 @@ void main() {
     test('starts live sync on sign in and stops on sign out', () async {
       final auth = _MutableAuthService();
       final repo = _TrackingSyncRepository();
+      final notes = _FakeNoteRepository();
       final controller = SyncController(
         authService: auth,
+        noteRepository: notes,
         syncRepository: repo,
         settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
@@ -71,6 +86,7 @@ void main() {
       addTearDown(() async {
         await auth.dispose();
         controller.dispose();
+        await notes.dispose();
       });
 
       auth.emit(const AuthSession(userId: 'u1', isAuthenticated: true));
@@ -86,8 +102,10 @@ void main() {
 
     test('app resume auto-pull is throttled', () async {
       final repo = _TrackingSyncRepository();
+      final notes = _FakeNoteRepository();
       final controller = SyncController(
         authService: _FakeAuthService(),
+        noteRepository: notes,
         syncRepository: repo,
         settingsRepository: _FakeSettingsRepository(),
         bootstrapState: const FirebaseBootstrapState(
@@ -95,12 +113,83 @@ void main() {
           isConfigured: true,
         ),
       );
-      addTearDown(controller.dispose);
+      addTearDown(() async {
+        controller.dispose();
+        await notes.dispose();
+      });
 
       await controller.onAppResumed();
       await controller.onAppResumed();
 
       expect(repo.pullCalls, 1);
+    });
+
+    test('auto push local changes runs only when enabled', () async {
+      final repo = _TrackingSyncRepository();
+      final notes = _FakeNoteRepository();
+      final controller = SyncController(
+        authService: _FakeAuthService(),
+        noteRepository: notes,
+        syncRepository: repo,
+        settingsRepository: _FakeSettingsRepository(
+          initial: AppSettingsEntity.defaults().copyWith(
+            autoPushLocalChangesEnabled: true,
+            autoSyncOnResumeEnabled: false,
+          ),
+        ),
+        bootstrapState: const FirebaseBootstrapState(
+          isAvailable: true,
+          isConfigured: true,
+        ),
+        autoPushDebounce: const Duration(milliseconds: 10),
+      );
+      addTearDown(() async {
+        controller.dispose();
+        await notes.dispose();
+      });
+
+      notes.emit([_testNote('n1')]);
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+
+      expect(repo.pushCalls, 1);
+    });
+
+    test('auto push is suppressed after pull-applied status', () async {
+      final repo = _ControllableSyncRepository();
+      final notes = _FakeNoteRepository();
+      final controller = SyncController(
+        authService: _FakeAuthService(),
+        noteRepository: notes,
+        syncRepository: repo,
+        settingsRepository: _FakeSettingsRepository(
+          initial: AppSettingsEntity.defaults().copyWith(
+            autoPushLocalChangesEnabled: true,
+            autoSyncOnResumeEnabled: false,
+          ),
+        ),
+        bootstrapState: const FirebaseBootstrapState(
+          isAvailable: true,
+          isConfigured: true,
+        ),
+        autoPushDebounce: const Duration(milliseconds: 10),
+      );
+      addTearDown(() async {
+        controller.dispose();
+        await notes.dispose();
+        await repo.dispose();
+      });
+
+      repo.emitStatus(
+        SyncStatusSnapshot(
+          code: SyncStatusCode.success,
+          lastMessage: 'pull_complete',
+          lastSuccessAt: DateTime.now(),
+        ),
+      );
+      notes.emit([_testNote('n2')]);
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+
+      expect(repo.pushCalls, 0);
     });
   });
 }
@@ -128,6 +217,56 @@ class _FakeSettingsRepository implements SettingsRepository {
         final sub = _controller.stream.listen(multi.add);
         multi.onCancel = sub.cancel;
       });
+}
+
+class _FakeNoteRepository implements NoteRepository {
+  final List<NoteEntity> _notes = <NoteEntity>[];
+  final _controller = StreamController<List<NoteEntity>>.broadcast();
+
+  @override
+  Stream<List<NoteEntity>> watchNotes() =>
+      Stream<List<NoteEntity>>.multi((multi) {
+        multi.add(List<NoteEntity>.unmodifiable(_notes));
+        final sub = _controller.stream.listen(multi.add);
+        multi.onCancel = sub.cancel;
+      });
+
+  void emit(List<NoteEntity> notes) {
+    _notes
+      ..clear()
+      ..addAll(notes);
+    _controller.add(List<NoteEntity>.unmodifiable(_notes));
+  }
+
+  @override
+  Future<List<NoteEntity>> getAllNotes() async => List<NoteEntity>.of(_notes);
+
+  @override
+  Future<NoteEntity?> getById(String id) async {
+    for (final note in _notes) {
+      if (note.id == id) return note;
+    }
+    return null;
+  }
+
+  @override
+  Future<void> upsert(NoteEntity note) async {
+    final index = _notes.indexWhere((element) => element.id == note.id);
+    if (index == -1) {
+      _notes.add(note);
+    } else {
+      _notes[index] = note;
+    }
+    _controller.add(List<NoteEntity>.unmodifiable(_notes));
+  }
+
+  @override
+  Future<void> deleteById(String id) async {
+    _notes.removeWhere((element) => element.id == id);
+    _controller.add(List<NoteEntity>.unmodifiable(_notes));
+  }
+
+  Future<void> dispose() => _controller.close();
 }
 
 class _FakeAuthService implements AuthService {
@@ -246,6 +385,24 @@ class _TrackingSyncRepository implements SyncRepository {
       Stream<SyncStatusSnapshot>.value(SyncStatusSnapshot.idle);
 }
 
+class _ControllableSyncRepository extends _TrackingSyncRepository {
+  final _statusController = StreamController<SyncStatusSnapshot>.broadcast();
+
+  void emitStatus(SyncStatusSnapshot status) {
+    _statusController.add(status);
+  }
+
+  @override
+  Stream<SyncStatusSnapshot> watchStatus() =>
+      Stream<SyncStatusSnapshot>.multi((multi) {
+        multi.add(SyncStatusSnapshot.idle);
+        final sub = _statusController.stream.listen(multi.add);
+        multi.onCancel = sub.cancel;
+      });
+
+  Future<void> dispose() => _statusController.close();
+}
+
 class _MutableAuthService implements AuthService {
   final _controller = StreamController<AuthSession>.broadcast();
   AuthSession _current = const AuthSession(
@@ -278,4 +435,19 @@ class _MutableAuthService implements AuthService {
   });
 
   Future<void> dispose() => _controller.close();
+}
+
+NoteEntity _testNote(String id) {
+  final now = DateTime(2026, 1, 1, 12);
+  return NoteEntity(
+    id: id,
+    quadrantType: QuadrantType.iu,
+    title: 'T$id',
+    description: null,
+    dueAt: null,
+    isDone: false,
+    orderIndex: 1,
+    createdAt: now,
+    updatedAt: now,
+  );
 }
